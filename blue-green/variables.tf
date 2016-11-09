@@ -7,8 +7,11 @@ variable "name" {
 variable "environment" {
   description = "Environment to deploy on"
 }
-variable "ami" {
-  description = "(Required) The EC2 image ID to launch"
+variable "blue_ami" {
+  description = "(Required) The EC2 image ID to launch in the blue autoscaling group"
+}
+variable "green_ami" {
+  description = "(Required) The EC2 image ID to launch in the green autoscaling group"
 }
 variable "instance_type" {
   description = "(Required) The size of instance to launch"
@@ -17,9 +20,14 @@ variable "key_name" {
   description = "(Optional) The key name that should be used for the instance"
   default = ""
 }
-variable "loadbalancers" {
+variable "blue_loadbalancers" {
   type = "list"
-  description = "List of the loadbalancer ids to attach to the autoscaling groups"
+  description = "(Optional) A list of load balancer names to add to the blue autoscaling group"
+  default = []
+}
+variable "green_loadbalancers" {
+  type = "list"
+  description = "(Optional) A list of load balancer names to add to the green autoscaling group"
   default = []
 }
 variable "security_groups" {
@@ -53,17 +61,23 @@ variable "subnets" {
   type = "list"
   default = []
 }
-variable "max_size" {
-  description = ""
-  default = 0
+variable "blue_max_size" {
+  description = "(Required) The maximum size of the blue autoscaling group"
 }
-variable "min_size" {
-  description = ""
-  default = 0
+variable "blue_min_size" {
+  description = "(Required) The minimum size of the blue autoscaling group"
 }
-variable "desired_capacity" {
-  description = ""
-  default = 0
+variable "blue_desired_capacity" {
+  description = "(Required) The number of Amazon EC2 instances that should be running in the blue autoscaling roup"
+}
+variable "green_max_size" {
+  description = "(Required) The maximum size of the green autoscaling group"
+}
+variable "green_min_size" {
+  description = "(Required) The minimum size of the green autoscaling group"
+}
+variable "green_desired_capacity" {
+  description = "(Required) The number of Amazon EC2 instances that should be running in the green autoscaling roup"
 }
 variable "health_check_grace_period" {
   description = "(Optional, Default: 300) Time (in seconds) after instance comes into service before checking health"

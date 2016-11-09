@@ -22,7 +22,7 @@ variable "key_name" {
 }
 variable "loadbalancers" {
   type = "list"
-  description = "List of the loadbalancer ids to attach to the autoscaling groups"
+  description = "(Optional) A list of load balancer names to add to the autoscaling group"
   default = []
 }
 variable "security_groups" {
@@ -57,16 +57,13 @@ variable "subnets" {
   default = []
 }
 variable "max_size" {
-  description = ""
-  default = 0
+  description = "(Required) The maximum size of the auto scale group"
 }
 variable "min_size" {
-  description = ""
-  default = 0
+  description = "(Required) The minimum size of the auto scale group"
 }
 variable "desired_capacity" {
-  description = ""
-  default = 0
+  description = "(Required) The number of Amazon EC2 instances that should be running in the group"
 }
 variable "health_check_grace_period" {
   description = "(Optional, Default: 300) Time (in seconds) after instance comes into service before checking health"
