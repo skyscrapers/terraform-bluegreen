@@ -3,7 +3,7 @@ resource "aws_launch_configuration" "bluegreen_launchconfig" {
   image_id = "${var.ami}"
   instance_type = "${var.instance_type}"
   key_name = "${var.key_name}"
-  security_groups = ["${var.security_group}"]
+  security_groups = "${var.security_groups}"
   iam_instance_profile = "${var.iam_instance_profile}"
   associate_public_ip_address  = "${var.associate_public_ip_address}"
   user_data  = "${var.user_data}"
@@ -22,7 +22,7 @@ resource "aws_launch_configuration" "bluegreen_launchconfig" {
 resource "aws_autoscaling_group" "bluegreen_asg" {
   name = "asg-${var.project}-${var.name}-${var.environment}-${var.color}"
   launch_configuration = "${aws_launch_configuration.bluegreen_launchconfig.id}"
-  availability_zones = ["${split(",", var.availability_zones)}"]
+  availability_zones = "${var.availability_zones}"
   vpc_zone_identifier = ["${var.subnets}"]
   load_balancers = "${var.loadbalancers}"
   max_size = "${var.max_size}"
