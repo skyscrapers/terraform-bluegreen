@@ -7,8 +7,8 @@ See the [blue-green/variables.tf](blue-green/variables.tf) file.
 
 ### Outputs
 
-* `blue_asg`: (object) blue autoscaling group
-* `green_asg`: (object) green autoscaling group
+* `blue_asg_id`: (Number) blue autoscaling group id
+* `green_asg_id`: (Number) green autoscaling group id
 
 ### Example
 

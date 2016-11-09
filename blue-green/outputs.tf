@@ -1,7 +1,7 @@
-output "blue_asg" {
-  value = "${module.blue.asg}"
+output "blue_asg_id" {
+  value = "${module.blue.asg_id}"
 }
 
-output "green_asg" {
-  value = "${module.green.asg}"
+output "green_asg_id" {
+  value = "${module.green.asg_id}"
 }

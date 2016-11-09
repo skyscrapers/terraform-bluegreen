@@ -1,3 +1,3 @@
-output "asg" {
-  value = "${aws_autoscaling_group.bluegreen_asg}"
+output "asg_id" {
+  value = "${aws_autoscaling_group.bluegreen_asg.id}"
 }
