@@ -3,30 +3,7 @@ Terraform module to setup blue / green deployments
 
 ### Variables
 
-* `project`:
-* `name`:
-* `environment`:
-* `blue_ami`:
-* `green_ami`:
-* `instance_type`:
-* `key_name`:
-* `blue_loadbalancers`:
-* `green_loadbalancers`:
-* `security_groups`:
-* `iam_instance_profile`:
-* `associate_public_ip_address`:
-* `user_data`:
-* `disk_volume_size`:
-* `disk_volume_type`:
-* `availability_zones`:
-* `subnets`:
-* `blue_max_size`:
-* `blue_min_size`:
-* `blue_desired_capacity`:
-* `green_max_size`:
-* `green_min_size`:
-* `green_desired_capacity`:
-* `health_check_grace_period`:
+See the [blue-green/variables.tf](blue-green/variables.tf) file.
 
 ### Outputs
 

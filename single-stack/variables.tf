@@ -52,7 +52,7 @@ variable "disk_volume_type" {
 }
 variable "availability_zones" {
   type = "list"
-  description = "(Optional) A list of AZs to launch resources in. Required only if you do not specify any vpc_zone_identifier"
+  description = "(Optional) A list of AZs to launch resources in. Required only if you do not specify any subnet"
   default = []
 }
 variable "subnets" {
