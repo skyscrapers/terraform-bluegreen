@@ -9,7 +9,7 @@ resource "aws_launch_configuration" "bluegreen_launchconfig" {
   user_data  = "${var.user_data}"
 
   root_block_device {
-    volume_type = "standard"
+    volume_type = "${var.disk_volume_type}"
     volume_size = "${var.disksize}"
     delete_on_termination = "true"
   }
