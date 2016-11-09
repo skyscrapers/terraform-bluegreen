@@ -50,7 +50,7 @@ variable "disk_volume_type" {
   description = "(Optional) The type of the volume. Default is standard"
   default = "standard"
 }
-variable "availability_zones" { # TODO
+variable "availability_zones" {
   type = "list"
   description = "(Optional) A list of AZs to launch resources in. Required only if you do not specify any vpc_zone_identifier"
   default = []
