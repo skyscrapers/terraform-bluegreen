@@ -1,12 +1,12 @@
 module "blue" {
   source = "../single-stack"
   color = "blue"
-  loadbalancers = "${var.blue_loadbalancers}"
   max_size = "${var.blue_max_size}"
   min_size = "${var.blue_min_size}"
   desired_capacity = "${var.blue_desired_capacity}"
   ami = "${var.blue_ami}"
 
+  loadbalancers = "${var.loadbalancers}"
   project = "${var.project}"
   name = "${var.name}"
   environment = "${var.environment}"
@@ -25,12 +25,12 @@ module "blue" {
 module "green" {
   source = "../single-stack"
   color = "green"
-  loadbalancers = "${var.green_loadbalancers}"
   max_size = "${var.green_max_size}"
   min_size = "${var.green_min_size}"
   desired_capacity = "${var.green_desired_capacity}"
   ami = "${var.green_ami}"
 
+  loadbalancers = "${var.loadbalancers}"
   project = "${var.project}"
   name = "${var.name}"
   environment = "${var.environment}"

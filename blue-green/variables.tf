@@ -20,14 +20,9 @@ variable "key_name" {
   description = "(Optional) The key name that should be used for the instance"
   default = ""
 }
-variable "blue_loadbalancers" {
+variable "loadbalancers" {
   type = "list"
-  description = "(Optional) A list of load balancer names to add to the blue autoscaling group"
-  default = []
-}
-variable "green_loadbalancers" {
-  type = "list"
-  description = "(Optional) A list of load balancer names to add to the green autoscaling group"
+  description = "(Optional) A list of load balancer names to add to the autoscaling groups"
   default = []
 }
 variable "security_groups" {
