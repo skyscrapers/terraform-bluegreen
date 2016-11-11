@@ -1,5 +1,4 @@
 resource "aws_launch_configuration" "bluegreen_launchconfig" {
-  name = "lc-${var.project}-${var.name}-${var.environment}-${var.color}"
   image_id = "${var.ami}"
   instance_type = "${var.instance_type}"
   key_name = "${var.key_name}"
