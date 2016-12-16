@@ -75,7 +75,7 @@ variable "health_check_grace_period" {
 }
 
 variable "termination_policies" {
-  description = "(Optional, Default: ['Default']) Order in termination policies to apply when choosing instances to terminate."
+  description = "(Optional, Default: ['Default']) Order in termination policies to apply when choosing instances to terminate. Always end with 'Default'."
   type = "list"
   default = ["Default"]
 }

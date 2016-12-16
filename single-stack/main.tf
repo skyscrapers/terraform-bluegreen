@@ -29,7 +29,7 @@ resource "aws_autoscaling_group" "bluegreen_asg" {
   desired_capacity = "${var.desired_capacity}"
   health_check_type = "ELB"
   health_check_grace_period  = "${var.health_check_grace_period}"
-  termination_policies = ["${var.termination_policies}}"]
+  termination_policies = ["${var.termination_policies}"]
 
   tag {
     key = "Environment"
