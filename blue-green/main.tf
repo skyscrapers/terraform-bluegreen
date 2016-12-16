@@ -20,6 +20,7 @@ module "blue" {
   availability_zones = "${var.availability_zones}"
   subnets = "${var.subnets}"
   health_check_grace_period = "${var.health_check_grace_period}"
+  termination_policies = ["${var.termination_policies}"]
 }
 
 module "green" {
@@ -44,4 +45,5 @@ module "green" {
   availability_zones = "${var.availability_zones}"
   subnets = "${var.subnets}"
   health_check_grace_period = "${var.health_check_grace_period}"
+  termination_policies = ["${var.termination_policies}"]
 }

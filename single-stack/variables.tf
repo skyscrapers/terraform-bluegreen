@@ -73,3 +73,9 @@ variable "health_check_grace_period" {
   description = "(Optional, Default: 300) Time (in seconds) after instance comes into service before checking health"
   default = "300"
 }
+
+variable "termination_policies" {
+  description = "(Optional, Default: ['Default']) Order in termination policies to apply when choosing instances to terminate."
+  type = "list"
+  default = ["Default"]
+}
