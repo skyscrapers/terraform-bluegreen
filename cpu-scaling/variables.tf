@@ -52,6 +52,10 @@ variable "adjustment_down" {
   default = "-1"
   description = "The number of instances to remove when the alarm is triggered (the value has to be negative)"
 }
+variable "num_asg" {
+  description = "the number of autoscaling groups passed"
+  default = "2"
+}
 variable "project" {
   description = "Project name to use"
 }
@@ -63,4 +67,5 @@ variable "environment" {
 }
 variable "autoscaling_group_name" {
   description = "The name of the AS group this config needs to be applied"
+  type = "list"
 }
