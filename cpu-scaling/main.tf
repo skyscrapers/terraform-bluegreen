@@ -41,7 +41,7 @@ resource "aws_autoscaling_policy" "up-cpu" {
 
 resource "aws_autoscaling_policy" "down-cpu" {
   name = "${var.environment}-${var.project}-${var.name}-cpu-down"
-  autoscaling_group_name = "${module.api.autoscaling_group_name}"
+  autoscaling_group_name = "${var.autoscaling_group_name}"
   adjustment_type = "ChangeInCapacity"
   policy_type = "${var.policy_type}"
   cooldown = "${var.cooldown_down}"
