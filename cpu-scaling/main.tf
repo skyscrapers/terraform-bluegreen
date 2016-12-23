@@ -5,7 +5,7 @@ resource "aws_cloudwatch_metric_alarm" "alarm-cpu-down" {
   metric_name = "CPUUtilization"
   namespace = "${var.namespace}"
   period = "${var.period_down}"
-  statistic = "${var.static}"
+  statistic = "${var.statistic}"
   threshold = "${var.threshold_down}"
   dimensions {
     AutoScalingGroupName = "${var.autoscaling_group_name}"
@@ -21,7 +21,7 @@ resource "aws_cloudwatch_metric_alarm" "alarm-cpu-up" {
   metric_name = "CPUUtilization"
   namespace = "${var.namespace}"
   period = "${var.period_up}"
-  statistic = "${var.static}"
+  statistic = "${var.statistic}"
   threshold = "${var.threshold_up}"
   dimensions {
     AutoScalingGroupName = "${var.autoscaling_group_name}"
