@@ -1,6 +1,8 @@
 # terraform-bluegreen
 Terraform module to setup blue / green deployments
 
+##blue-green
+
 ### Variables
 
 See the [blue-green/variables.tf](blue-green/variables.tf) file.
@@ -29,5 +31,27 @@ module "bluegreen" {
   green_min_size = "0"
   green_desired_capacity = "0"
   security_groups = []
+}
+```
+
+## cpu-scaling
+Terraform module to setup alarms and autoscaling triggers for autoscaling
+
+### Variables
+
+See the [cpu-scaling/variables.tf](cpu-scaling/variables.tf) file.
+
+### Outputs
+/
+
+### Example
+
+```
+module "cpu-scaling" {
+  source = "github.com/skyscrapers/terraform-bluegreen//cpu-scaling"
+  project = "example"
+  name = "app"
+  environment = "production"
+  autoscaling_group_name = "my_asg_name"
 }
 ```
