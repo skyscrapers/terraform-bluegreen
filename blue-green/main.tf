@@ -22,6 +22,7 @@ module "blue" {
   subnets = "${var.subnets}"
   health_check_grace_period = "${var.health_check_grace_period}"
   termination_policies = ["${var.termination_policies}"]
+  target_group_arns = "${var.target_group_arns}"
 }
 
 module "green" {
@@ -48,4 +49,5 @@ module "green" {
   subnets = "${var.subnets}"
   health_check_grace_period = "${var.health_check_grace_period}"
   termination_policies = ["${var.termination_policies}"]
+  target_group_arns = "${var.target_group_arns}"
 }

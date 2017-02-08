@@ -88,3 +88,9 @@ variable "termination_policies" {
   type = "list"
   default = ["Default"]
 }
+
+variable "target_group_arns" {
+  type = "list"
+  description = "A list of aws_alb_target_group ARNs, for use with Application Load Balancing"
+  default = []
+}
