@@ -52,6 +52,6 @@ module "cpu-scaling" {
   project = "example"
   name = "app"
   environment = "production"
-  autoscaling_group_name = "my_asg_name"
+  autoscaling_group_name = ["my_asg_name1","my_asg_name2"]
 }
 ```
