@@ -22,7 +22,8 @@ module "bluegreen" {
   environment = "production"
   blue_ami = "ami-blabla"
   green_ami = "ami-blabla"
-  instance_type = "t2.micro"
+  blue_instance_type = "t2.medium"
+  green_instance_type = "t2.micro"
   loadbalancers = []
   blue_max_size = "5"
   blue_min_size = "2"

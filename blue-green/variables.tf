@@ -13,8 +13,11 @@ variable "blue_ami" {
 variable "green_ami" {
   description = "(Required) The EC2 image ID to launch in the green autoscaling group"
 }
-variable "instance_type" {
-  description = "(Required) The size of instance to launch"
+variable "blue_instance_type" {
+  description = "(Required) The size of the blue instances to launch"
+}
+variable "green_instance_type" {
+  description = "(Required) The size of the green instances to launch"
 }
 variable "key_name" {
   description = "(Optional) The key name that should be used for the instance"
