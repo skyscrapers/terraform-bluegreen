@@ -55,3 +55,55 @@ module "cpu-scaling" {
   autoscaling_group_name = ["my_asg_name1","my_asg_name2"]
 }
 ```
+
+## Blue-green deployments
+The blue-green deployment script expects certain inputs and outputs in the Terraform project you want to deploy in a blue-green fashion.
+### Required outputs:
+```
+output "blue_asg_id" {
+  value = "${module.<blue-green-module-name>.blue_asg_id}"
+}
+
+output "blue_asg_id" {
+  value =  "${module.<blue-green-module-name>.blue_asg_id}"
+}
+```
+### Required variables:
+```
+variable "blue_max_size" {
+  description = "max instances blue"
+}
+
+variable "blue_min_size" {
+  description = "min instances blue"
+}
+
+variable "blue_desired_capacity" {
+  description = "desired instances blue"
+}
+
+variable "green_max_size" {
+  description = "max instances green"
+}
+
+variable "green_min_size" {
+  description = "min instances green"
+}
+
+variable "green_desired_capacity" {
+  description = "desired instances green"
+}
+
+variable "blue_ami" {
+  description = "blue ami"
+}
+
+variable "green_ami" {
+  description = "green ami"
+}
+```
+
+These input variables need to be assigned to your module. Make sure you do a terraform refresh to be sure that the terraform outputs are saved in the Terraform state file. After that you can execute the blue-green script.
+```
+./bluegreen.py -f stacks/test/application -a ami-xxxx -c apply -t 500
+```
