@@ -40,7 +40,8 @@ variable "associate_public_ip_address" {
 }
 variable "user_data" {
   description = "(Optional) The user data to provide when launching the instance"
-  default = ""
+  default = [""]
+  type    = "list"
 }
 variable "disk_volume_size" {
   description = "(Optional) The size of the volume in gigabytes"
