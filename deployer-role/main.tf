@@ -1,5 +1,5 @@
 resource "aws_iam_role" "deployer_role" {
-  name_prefix        = "deployer_${var.project}_${var.environment}_"
+  name               = "deployer_${var.project}_${var.environment}"
   path               = "/bluegreen"
   assume_role_policy = "${data.aws_iam_policy_document.deployer_assume_role_policy.json}"
 }
