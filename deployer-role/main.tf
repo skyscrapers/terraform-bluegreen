@@ -1,6 +1,6 @@
 resource "aws_iam_role" "deployer_role" {
   name               = "deployer_${var.project}_${var.environment}"
-  path               = "/bluegreen"
+  path               = "/bluegreen/"
   assume_role_policy = "${data.aws_iam_policy_document.deployer_assume_role_policy.json}"
 }
 
@@ -19,7 +19,6 @@ data "aws_iam_policy_document" "deployer_assume_role_policy" {
 
 resource "aws_iam_role_policy" "deployer_policy" {
   name_prefix = "deployer_${var.project}_${var.environment}_"
-  description = "Policy to allow blue-green deployments in this account"
   role        = "${aws_iam_role.deployer_role.id}"
 
   policy = <<EOF
@@ -28,10 +27,10 @@ resource "aws_iam_role_policy" "deployer_policy" {
   "Statement": [
     {
       "Action": [
-        "TBD"
+        "*"
       ],
       "Effect": "Allow",
-      "Resource": "TBD"
+      "Resource": "*"
     }
   ]
 }
