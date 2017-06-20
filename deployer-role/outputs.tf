@@ -7,13 +7,13 @@ output "iam_role_name" {
 }
 
 output "iam_policy_arn" {
-  value = "${aws_iam_policy.deployer_policy.arn}"
+  value = "${aws_iam_role_policy.deployer_policy.arn}"
 }
 
 output "iam_policy_name" {
-  value = "${aws_iam_policy.deployer_policy.name}"
+  value = "${aws_iam_role_policy.deployer_policy.name}"
 }
 
 output "iam_policy_id" {
-  value = "${aws_iam_policy.deployer_policy.id}"
+  value = "${aws_iam_role_policy.deployer_policy.id}"
 }
