@@ -73,7 +73,10 @@ See the [deployer-role/variables.tf](deployer-role/variables.tf) file.
 * `iam_policy_id`: (String) Created IAM policy ID
 
 ## Blue-green deployments
+
+The `bluegreen.py` script performs a bluegreen deployment of the selected terraform stack. It only works with Python 2.7.
 The blue-green deployment script expects certain inputs and outputs in the Terraform project you want to deploy in a blue-green fashion.
+
 ### Required outputs:
 ```
 output "blue_asg_id" {
@@ -119,7 +122,20 @@ variable "green_ami" {
 }
 ```
 
-These input variables need to be assigned to your module. Make sure you do a terraform refresh to be sure that the terraform outputs are saved in the Terraform state file. After that you can execute the blue-green script.
+These input variables need to be assigned to your module. Make sure you do a terraform refresh to be sure that the terraform outputs are saved in the Terraform state file.
+
+### Usage
+
+First you need to install the requirements:
+
+```sh
+pip install -r requirements.txt
 ```
+
+Run `./bluegreen.py --help` to see the available options.
+
+Example:
+
+```sh
 ./bluegreen.py -f stacks/test/application -a ami-xxxx -c apply -t 500
 ```
