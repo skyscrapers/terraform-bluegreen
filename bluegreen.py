@@ -88,6 +88,9 @@ def main(argv):
 def getTerraformOutput (projectPath, output):
     process = subprocess.Popen('terraform output ' + output, shell=True, cwd=projectPath, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output = process.communicate()[0].rstrip()
+    if process.returncode != 0:
+        sys.exit(process.returncode)
+
     return output
 
 def getAutoscalingInfo (blue, green):
@@ -211,8 +214,10 @@ def updateAutoscaling (command, blueMax, blueMin, blueDesired, blueAMI, greenMax
     out, err = process.communicate()
     print 'stdoutput'
     print out
-    print 'stderror'
-    print err
+    if process.returncode != 0:
+        print 'stderror'
+        print err
+        sys.exit(process.returncode)
 
 def checkScalingStatus (elbs, albs, desiredInstanceCount):
     client = boto3.client('elb')
