@@ -56,22 +56,6 @@ module "cpu-scaling" {
 }
 ```
 
-## deployer-role
-
-Terraform module that creates an IAM policy that allows to manage a blue-green deployment. It also creates an IAM role with that policy attached.
-
-### Variables
-
-See the [deployer-role/variables.tf](deployer-role/variables.tf) file.
-
-### Outputs
-
-* `iam_role_arn`: (String) Created IAM role ARN
-* `iam_role_name`: (String) Created IAM role name
-* `iam_policy_arn`: (String) Created IAM policy ARN
-* `iam_policy_name`: (String) Created IAM policy name
-* `iam_policy_id`: (String) Created IAM policy ID
-
 ## Blue-green deployments
 
 The `bluegreen.py` script performs a bluegreen deployment of the selected terraform stack. It only works with Python 2.7.
