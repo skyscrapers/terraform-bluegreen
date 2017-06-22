@@ -10,7 +10,7 @@ def main(argv):
     helptext = 'bluegreen.py -f <path to terraform project> -a <ami> -c <command> -t <timeout>'
 
     try:
-        opts, args = getopt.getopt(argv,"hf:a:c:t:",["folder=","ami=","command=", "timeout="])
+        opts, args = getopt.getopt(argv,"hf:a:c:t:e:",["folder=","ami=","command=", "timeout=", "environment="])
     except getopt.GetoptError:
         print helptext
         sys.exit(2)
@@ -28,6 +28,8 @@ def main(argv):
                 command = arg
             elif opt in ("-t", "--timeout"):
                 maxTimeout = int(arg)
+            elif opt in ("-e", "--environment"):
+                environment = arg
     else:
         print helptext
         sys.exit(2)
@@ -48,6 +50,9 @@ def main(argv):
         print helptext
         sys.exit(2)
 
+    if 'environment' not in locals():
+        environment = None
+
     # Retrieve autoscaling group names
     agBlue = getTerraformOutput(projectPath, 'blue_asg_id')
     agGreen = getTerraformOutput(projectPath, 'green_asg_id')
@@ -59,9 +64,9 @@ def main(argv):
     active = getActive(info)
 
     # Bring up the not active autoscaling group with the new AMI
-    desiredInstanceCount = newAutoscaling(info, active, ami, command, projectPath)
+    desiredInstanceCount = newAutoscaling(info, active, ami, command, projectPath, environment)
 
-    # Retieve all ELBs annd ALBs
+    # Retieve all ELBs and ALBs
     elbs = getLoadbalancers(info, 'elb')
     albs = getLoadbalancers(info, 'alb')
 
@@ -75,7 +80,7 @@ def main(argv):
         while checkScalingStatus(elbs, albs, desiredInstanceCount) != True:
             if timeout > maxTimeout:
                 print 'Roling back'
-                rollbackAutoscaling(info, active, ami, command, projectPath)
+                rollbackAutoscaling(info, active, ami, command, projectPath, environment)
                 sys.exit(2)
 
             print 'Waiting for 10 seconds to get autoscaling status'
@@ -83,7 +88,7 @@ def main(argv):
             timeout += 10
 
         print 'We can stop the old autoscaling now'
-        oldAutoscaling(info, active, ami, command, projectPath)
+        oldAutoscaling(info, active, ami, command, projectPath, environment)
 
 def getTerraformOutput (projectPath, output):
     process = subprocess.Popen('terraform output ' + output, shell=True, cwd=projectPath, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -131,7 +136,7 @@ def getActive (info):
         print 'Both are active'
         sys.exit(1)
 
-def newAutoscaling (info, active, ami, command, projectPath):
+def newAutoscaling (info, active, ami, command, projectPath, environment):
     blueMin = info['AutoScalingGroups'][active]['MinSize']
     blueMax = info['AutoScalingGroups'][active]['MaxSize']
     blueDesired = info['AutoScalingGroups'][active]['DesiredCapacity']
@@ -150,12 +155,12 @@ def newAutoscaling (info, active, ami, command, projectPath):
         print 'No acive AMI'
         sys.exit(1)
 
-    updateAutoscaling (command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath)
+    updateAutoscaling (command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath, environment)
 
     # Return the amount of instances we should see in ELBs and ALBs. This is * 2 because we need to think about both autoscaling groups.
     return info['AutoScalingGroups'][active]['DesiredCapacity'] * 2
 
-def oldAutoscaling (info, active, ami, command, projectPath):
+def oldAutoscaling (info, active, ami, command, projectPath, environment):
     blueAMI = getAmi(info['AutoScalingGroups'][0]['LaunchConfigurationName'])
     greenAMI = getAmi(info['AutoScalingGroups'][1]['LaunchConfigurationName'])
     if active == 0:
@@ -178,9 +183,9 @@ def oldAutoscaling (info, active, ami, command, projectPath):
         print 'No acive AMI'
         sys.exit(1)
 
-    updateAutoscaling (command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath)
+    updateAutoscaling (command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath, environment)
 
-def rollbackAutoscaling (info, active, ami, command, projectPath):
+def rollbackAutoscaling (info, active, ami, command, projectPath, environment):
     blueAMI = getAmi(info['AutoScalingGroups'][0]['LaunchConfigurationName'])
     greenAMI = getAmi(info['AutoScalingGroups'][1]['LaunchConfigurationName'])
 
@@ -205,10 +210,10 @@ def rollbackAutoscaling (info, active, ami, command, projectPath):
         print 'No acive AMI'
         sys.exit(1)
 
-    updateAutoscaling (command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath)
+    updateAutoscaling (command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath, environment)
 
-def updateAutoscaling (command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath):
-    command = 'terraform ' + command + ' -var \'blue_max_size=' + str(blueMax) + '\' -var \'blue_min_size=' + str(blueMin) + '\' -var \'blue_desired_capacity=' + str(blueDesired) + '\' -var \'green_max_size=' + str(greenMax) + '\' -var \'green_min_size=' + str(greenMin) + '\' -var \'green_desired_capacity=' + str(greenDesired) + '\' -var \'green_ami=' + greenAMI + '\' -var \'blue_ami=' + blueAMI + '\''
+def updateAutoscaling (command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath, environment):
+    command = 'terraform %s %s' % (command, buildTerraformVars(blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, environment))
     print command
     process = subprocess.Popen(command, shell=True, cwd=projectPath, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = process.communicate()
@@ -245,6 +250,26 @@ def checkScalingStatus (elbs, albs, desiredInstanceCount):
             if state['TargetHealth']['State'] != 'healthy' :
                 return False
     return True
+
+def buildTerraformVars (blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, environment):
+    variables = {
+        'blue_max_size': blueMax,
+        'blue_min_size': blueMin,
+        'blue_desired_capacity': blueDesired,
+        'blue_ami': blueAMI,
+        'green_max_size': greenMax,
+        'green_min_size': greenMin,
+        'green_desired_capacity': greenDesired,
+        'green_ami': greenAMI
+    }
+    out = []
+    if environment != None:
+        for key, value in variables.iteritems():
+            out.append('-var \'%s={ %s = "%s" }\'' % (key, environment, value))
+    else:
+        for key, value in variables.iteritems():
+            out.append('-var \'%s=%s\'' % (key, value))
+    return ' '.join(out)
 
 if __name__ == "__main__":
    main(sys.argv[1:])
