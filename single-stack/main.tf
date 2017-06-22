@@ -18,10 +18,11 @@ resource "aws_launch_configuration" "bluegreen_launchconfig" {
   }
 }
 
+data "aws_availability_zones" "available" {}
+
 resource "aws_autoscaling_group" "bluegreen_asg" {
   name = "asg-${var.project}-${var.name}-${var.environment}-${var.color}"
   launch_configuration = "${aws_launch_configuration.bluegreen_launchconfig.id}"
-  availability_zones = ["${var.availability_zones}"]
   vpc_zone_identifier = ["${var.subnets}"]
   load_balancers = ["${var.loadbalancers}"]
   max_size = "${var.max_size}"

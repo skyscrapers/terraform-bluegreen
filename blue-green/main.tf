@@ -18,7 +18,6 @@ module "blue" {
   user_data = "${var.user_data}"
   disk_volume_size = "${var.disk_volume_size}"
   disk_volume_type = "${var.disk_volume_type}"
-  availability_zones = "${var.availability_zones}"
   subnets = "${var.subnets}"
   health_check_grace_period = "${var.health_check_grace_period}"
   termination_policies = ["${var.termination_policies}"]
@@ -45,7 +44,6 @@ module "green" {
   user_data = "${var.user_data}"
   disk_volume_size = "${var.disk_volume_size}"
   disk_volume_type = "${var.disk_volume_type}"
-  availability_zones = "${var.availability_zones}"
   subnets = "${var.subnets}"
   health_check_grace_period = "${var.health_check_grace_period}"
   termination_policies = ["${var.termination_policies}"]
