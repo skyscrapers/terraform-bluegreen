@@ -98,3 +98,8 @@ variable "target_group_arns" {
   description = "A list of aws_alb_target_group ARNs, for use with Application Load Balancing"
   default     = []
 }
+
+variable "health_check_type" {
+  description = "The health check type to apply to the Autoscaling group."
+  default     = "ELB"
+}

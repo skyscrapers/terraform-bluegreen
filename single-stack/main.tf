@@ -26,7 +26,7 @@ resource "aws_autoscaling_group" "bluegreen_asg" {
   max_size                  = "${var.max_size}"
   min_size                  = "${var.min_size}"
   desired_capacity          = "${var.desired_capacity}"
-  health_check_type         = "ELB"
+  health_check_type         = "${var.health_check_type}"
   health_check_grace_period = "${var.health_check_grace_period}"
   termination_policies      = ["${var.termination_policies}"]
   target_group_arns         = ["${var.target_group_arns}"]
