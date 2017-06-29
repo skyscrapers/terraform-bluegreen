@@ -7,7 +7,7 @@ import subprocess
 import time
 
 def main(argv):
-    helptext = 'bluegreen.py -f <path to terraform project> -a <ami> -c <command> -t <timeout>'
+    helptext = 'bluegreen.py -f <path to terraform project> -a <ami> -c <command> -t <timeout> -e <envirment.tfvars path>'
 
     try:
         opts, args = getopt.getopt(argv,"hf:a:c:t:e:",["folder=","ami=","command=", "timeout=", "environment="])
@@ -266,7 +266,7 @@ def buildTerraformVars (blueMax, blueMin, blueDesired, blueAMI, greenMax, greenM
 
     # When using terraform environments, set the environment tfvars file
     if environment != None:
-        out.append('-var-file=%s.tfvars' % (environment))
+        out.append('-var-file=%s' % (environment))
 
     for key, value in variables.iteritems():
         out.append('-var \'%s=%s\'' % (key, value))
