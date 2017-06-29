@@ -7,7 +7,7 @@ import subprocess
 import time
 
 def main(argv):
-    helptext = 'bluegreen.py -f <path to terraform project> -a <ami> -c <command> -t <timeout> -e <envirment.tfvars path>'
+    helptext = 'bluegreen.py -f <path to terraform project> -a <ami> -c <command> -t <timeout> -e <environment.tfvars path>'
 
     try:
         opts, args = getopt.getopt(argv,"hf:a:c:t:e:",["folder=","ami=","command=", "timeout=", "environment="])
