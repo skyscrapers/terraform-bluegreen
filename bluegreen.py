@@ -263,12 +263,13 @@ def buildTerraformVars (blueMax, blueMin, blueDesired, blueAMI, greenMax, greenM
         'green_ami': greenAMI
     }
     out = []
+
+    for key, value in variables.iteritems():
+        out.append('-var \'%s=%s\'' % (key, value))
+
+    # When using terraform environmenst, set the environment tfvar file
     if environment != None:
-        for key, value in variables.iteritems():
-            out.append('-var \'%s={ %s = "%s" }\'' % (key, environment, value))
-    else:
-        for key, value in variables.iteritems():
-            out.append('-var \'%s=%s\'' % (key, value))
+        out.append('-var-file=%s.tfvars' % (environment))
     return ' '.join(out)
 
 if __name__ == "__main__":
