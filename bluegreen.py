@@ -92,11 +92,13 @@ def main(argv):
 
 def getTerraformOutput (projectPath, output):
     process = subprocess.Popen('terraform output ' + output, shell=True, cwd=projectPath, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    output = process.communicate()[0].rstrip()
+    std_out, std_err = process.communicate()
     if process.returncode != 0:
+        err_msg = "%s. Code: %s" % (std_err.strip(), process.returncode)
+        print err_msg
         sys.exit(process.returncode)
 
-    return output
+    return std_out.rstrip()
 
 def getAutoscalingInfo (blue, green):
     client = boto3.client('autoscaling')
