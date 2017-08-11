@@ -117,6 +117,7 @@ variable "health_check_type" {
 }
 
 variable "tags" {
-  type    = "list"
-  default = []
+  description = "(Optional, Default: []) List of map of additional tags"
+  type        = "list"
+  default     = []
 }
