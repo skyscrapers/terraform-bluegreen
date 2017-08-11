@@ -23,7 +23,7 @@ module "blue" {
   termination_policies        = ["${var.termination_policies}"]
   target_group_arns           = "${var.target_group_arns}"
   health_check_type           = "${var.health_check_type}"
-  tags = "${var.tags}"
+  tags                        = "${var.tags}"
 }
 
 module "green" {
@@ -51,6 +51,5 @@ module "green" {
   termination_policies        = ["${var.termination_policies}"]
   target_group_arns           = "${var.target_group_arns}"
   health_check_type           = "${var.health_check_type}"
-  tags = "${var.tags}"
-
+  tags                        = "${var.tags}"
 }

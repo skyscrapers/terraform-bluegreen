@@ -105,6 +105,6 @@ variable "health_check_type" {
 }
 
 variable "tags" {
-  type = "list"
+  type    = "list"
   default = []
 }
