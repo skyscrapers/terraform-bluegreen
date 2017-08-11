@@ -115,3 +115,9 @@ variable "health_check_type" {
   description = "The health check type to apply to the Autoscaling groups."
   default     = "ELB"
 }
+
+variable "tags" {
+  description = "(Optional, Default: []) List of map of additional tags"
+  type        = "list"
+  default     = []
+}
