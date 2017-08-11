@@ -79,3 +79,21 @@ variable "autoscaling_group_name" {
   description = "The name of the AS group this config needs to be applied"
   type        = "list"
 }
+
+variable "metric_name" {
+  description = "The metric the scaling is based upon"
+  default     = "CPUUtilization"
+}
+
+variable "adjustment_type" {
+  description = "What typ of adjustment needs to happen"
+  default     = "ChangeInCapacity"
+}
+
+variable "dimension_name" {
+  default = "AutoScalingGroupName"
+}
+
+variable "dimension_value" {
+  default = "false"
+}
