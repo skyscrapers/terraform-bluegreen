@@ -7,11 +7,12 @@ import subprocess
 import time
 from datetime import datetime
 
+
 def main(argv):
     helptext = 'bluegreen.py -f <path to terraform project> -a <ami> -c <command> -t <timeout> -e <environment.tfvars path>'
 
     try:
-        opts, args = getopt.getopt(argv,"hf:a:c:t:e:",["folder=","ami=","command=", "timeout=", "environment="])
+        opts, args = getopt.getopt(argv, "hf:a:c:t:e:", ["folder=", "ami=", "command=", "timeout=", "environment="])
     except getopt.GetoptError:
         print helptext
         sys.exit(2)
@@ -82,7 +83,7 @@ def main(argv):
         print 'Waiting for 30 seconds to get autoscaling status'
         time.sleep(30)
         timeout = 30
-        while checkScalingStatus(elbs, albs, desiredInstanceCount) != True:
+        while checkScalingStatus(elbs, albs, desiredInstanceCount) is not True:
             if timeout > maxTimeout:
                 print 'Roling back'
                 rollbackAutoscaling(info, active, ami, command, projectPath, environment)
@@ -98,7 +99,7 @@ def main(argv):
             print 'Deactivating the autoscaling'
 
 
-def getTerraformOutput (projectPath, output):
+def getTerraformOutput(projectPath, output):
     process = subprocess.Popen('terraform output ' + output, shell=True, cwd=projectPath, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     std_out, std_err = process.communicate()
     if process.returncode != 0:
@@ -108,7 +109,8 @@ def getTerraformOutput (projectPath, output):
 
     return std_out.rstrip()
 
-def getAutoscalingInfo (blue, green):
+
+def getAutoscalingInfo(blue, green):
     client = boto3.client('autoscaling')
     response = client.describe_auto_scaling_groups(
         AutoScalingGroupNames=[
@@ -119,13 +121,15 @@ def getAutoscalingInfo (blue, green):
     )
     return response
 
+
 def getLoadbalancers(info, type):
     if type == 'alb':
         return info['AutoScalingGroups'][0]['TargetGroupARNs']
     else:
         return info['AutoScalingGroups'][0]['LoadBalancerNames']
 
-def getAmi (launchconfig):
+
+def getAmi(launchconfig):
     client = boto3.client('autoscaling')
     response = client.describe_launch_configurations(
         LaunchConfigurationNames=[
@@ -134,6 +138,7 @@ def getAmi (launchconfig):
         MaxRecords=1
     )
     return response['LaunchConfigurations'][0]['ImageId']
+
 
 def getLaunchconfigDate(launchconfig):
     client = boto3.client('autoscaling')
@@ -145,7 +150,8 @@ def getLaunchconfigDate(launchconfig):
     )
     return datetime.strptime(response['LaunchConfigurations'][0]['CreatedTime'], '%Y-%m-%dT%H:%M:%S.%fZ')
 
-def getActive (info):
+
+def getActive(info):
     if info['AutoScalingGroups'][0]['DesiredCapacity'] > 0 and info['AutoScalingGroups'][1]['DesiredCapacity'] == 0:
         print 'Blue is active'
         return 0
@@ -170,7 +176,8 @@ def getActive (info):
         print 'Both are active'
         sys.exit(1)
 
-def newAutoscaling (info, active, ami, command, projectPath, environment):
+
+def newAutoscaling(info, active, ami, command, projectPath, environment):
     blueMin = info['AutoScalingGroups'][active]['MinSize']
     blueMax = info['AutoScalingGroups'][active]['MaxSize']
     blueDesired = info['AutoScalingGroups'][active]['DesiredCapacity']
@@ -182,18 +189,18 @@ def newAutoscaling (info, active, ami, command, projectPath, environment):
     if active == 0:
         blueAMI = getAmi(info['AutoScalingGroups'][active]['LaunchConfigurationName'])
         greenAMI = ami
-        if inactiveAutoscalinggroups: # if we are dealing with empty asgs we override the desired capacity
+        if inactiveAutoscalinggroups:  # if we are dealing with empty asgs we override the desired capacity
             greenDesired = 1
     elif active == 1:
         blueAMI = ami
         greenAMI = getAmi(info['AutoScalingGroups'][active]['LaunchConfigurationName'])
-        if inactiveAutoscalinggroups: # if we are dealing with empty asgs we override the desired capacity
+        if inactiveAutoscalinggroups:  # if we are dealing with empty asgs we override the desired capacity
             blueDesired = 1
     else:
         print 'No acive AMI'
         sys.exit(1)
 
-    updateAutoscaling (command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath, environment)
+    updateAutoscaling(command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath, environment)
 
     # Return the amount of instances we should see in ELBs and ALBs. This is * 2 because we need to think about both autoscaling groups.
     # unless we are working with empty asgs
@@ -202,7 +209,8 @@ def newAutoscaling (info, active, ami, command, projectPath, environment):
     else:
         return info['AutoScalingGroups'][active]['DesiredCapacity'] * 2
 
-def oldAutoscaling (info, active, ami, command, projectPath, environment):
+
+def oldAutoscaling(info, active, ami, command, projectPath, environment):
     blueAMI = getAmi(info['AutoScalingGroups'][0]['LaunchConfigurationName'])
     greenAMI = getAmi(info['AutoScalingGroups'][1]['LaunchConfigurationName'])
     if active == 0:
@@ -231,12 +239,12 @@ def oldAutoscaling (info, active, ami, command, projectPath, environment):
         print 'No acive AMI'
         sys.exit(1)
 
-    updateAutoscaling (command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath, environment)
+    updateAutoscaling(command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath, environment)
 
-def rollbackAutoscaling (info, active, ami, command, projectPath, environment):
+
+def rollbackAutoscaling(info, active, ami, command, projectPath, environment):
     blueAMI = getAmi(info['AutoScalingGroups'][0]['LaunchConfigurationName'])
     greenAMI = getAmi(info['AutoScalingGroups'][1]['LaunchConfigurationName'])
-
 
     if active == 0:
         blueMin = info['AutoScalingGroups'][0]['MinSize']
@@ -264,7 +272,8 @@ def rollbackAutoscaling (info, active, ami, command, projectPath, environment):
         print 'No acive AMI'
         sys.exit(1)
 
-    updateAutoscaling (command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath, environment)
+    updateAutoscaling(command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath, environment)
+
 
 def stopAutoscaling(info, active, ami, command, projectPath, environment):
     blueMin = info['AutoScalingGroups'][active]['MinSize']
@@ -285,9 +294,10 @@ def stopAutoscaling(info, active, ami, command, projectPath, environment):
         print 'No acive AMI'
         sys.exit(1)
 
-    updateAutoscaling (command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath, environment)
+    updateAutoscaling(command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath, environment)
 
-def updateAutoscaling (command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath, environment):
+
+def updateAutoscaling(command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath, environment):
     command = 'terraform %s %s' % (command, buildTerraformVars(blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, environment))
     print command
     process = subprocess.Popen(command, shell=True, cwd=projectPath, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -299,7 +309,8 @@ def updateAutoscaling (command, blueMax, blueMin, blueDesired, blueAMI, greenMax
         print err
         sys.exit(process.returncode)
 
-def checkScalingStatus (elbs, albs, desiredInstanceCount):
+
+def checkScalingStatus(elbs, albs, desiredInstanceCount):
     client = boto3.client('elb')
     for elb in elbs:
         response = client.describe_instance_health(
@@ -310,7 +321,7 @@ def checkScalingStatus (elbs, albs, desiredInstanceCount):
             return False
         for state in response['InstanceStates']:
             print 'ELB: ' + state['State']
-            if state['State'] != 'InService' :
+            if state['State'] != 'InService':
                 return False
     client = boto3.client('elbv2')
     for alb in albs:
@@ -322,11 +333,12 @@ def checkScalingStatus (elbs, albs, desiredInstanceCount):
             return False
         for state in response['TargetHealthDescriptions']:
             print 'ALB: ' + state['TargetHealth']['State']
-            if state['TargetHealth']['State'] != 'healthy' :
+            if state['TargetHealth']['State'] != 'healthy':
                 return False
     return True
 
-def buildTerraformVars (blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, environment):
+
+def buildTerraformVars(blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, environment):
     variables = {
         'blue_max_size': blueMax,
         'blue_min_size': blueMin,
@@ -340,7 +352,7 @@ def buildTerraformVars (blueMax, blueMin, blueDesired, blueAMI, greenMax, greenM
     out = []
 
     # When using terraform environments, set the environment tfvars file
-    if environment != None:
+    if environment is not None:
         out.append('-var-file=%s' % (environment))
 
     for key, value in variables.iteritems():
@@ -348,5 +360,6 @@ def buildTerraformVars (blueMax, blueMin, blueDesired, blueAMI, greenMax, greenM
 
     return ' '.join(out)
 
+
 if __name__ == "__main__":
-   main(sys.argv[1:])
+    main(sys.argv[1:])
