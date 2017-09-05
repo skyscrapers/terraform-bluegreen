@@ -97,6 +97,7 @@ def main(argv):
         oldAutoscaling(info, active, ami, command, projectPath, environment)
         if inactiveAutoscalinggroups:
             print 'Deactivating the autoscaling'
+            stopAutoscaling(info, active, ami, command, projectPath, environment)
 
 
 def getTerraformOutput(projectPath, output):
