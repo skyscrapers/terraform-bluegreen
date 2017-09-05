@@ -5,6 +5,7 @@ import getopt
 import sys
 import subprocess
 import time
+from datetime import datetime
 
 def main(argv):
     helptext = 'bluegreen.py -f <path to terraform project> -a <ami> -c <command> -t <timeout> -e <environment.tfvars path>'
@@ -53,6 +54,10 @@ def main(argv):
     if 'environment' not in locals():
         environment = None
 
+    # Create a global variable to handle deploys on inactive autoscaling groups
+    global inactiveAutoscalinggroups
+    inactiveAutoscalinggroups = False
+
     # Retrieve autoscaling group names
     agBlue = getTerraformOutput(projectPath, 'blue_asg_id')
     agGreen = getTerraformOutput(projectPath, 'green_asg_id')
@@ -89,6 +94,9 @@ def main(argv):
 
         print 'We can stop the old autoscaling now'
         oldAutoscaling(info, active, ami, command, projectPath, environment)
+        if inactiveAutoscalinggroups:
+            print 'Deactivating the autoscaling'
+
 
 def getTerraformOutput (projectPath, output):
     process = subprocess.Popen('terraform output ' + output, shell=True, cwd=projectPath, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -127,6 +135,16 @@ def getAmi (launchconfig):
     )
     return response['LaunchConfigurations'][0]['ImageId']
 
+def getLaunchconfigDate(launchconfig):
+    client = boto3.client('autoscaling')
+    response = client.describe_launch_configurations(
+        LaunchConfigurationNames=[
+            launchconfig,
+        ],
+        MaxRecords=1
+    )
+    return datetime.strptime(response['LaunchConfigurations'][0]['CreatedTime'], '%Y-%m-%dT%H:%M:%S.%fZ')
+
 def getActive (info):
     if info['AutoScalingGroups'][0]['DesiredCapacity'] > 0 and info['AutoScalingGroups'][1]['DesiredCapacity'] == 0:
         print 'Blue is active'
@@ -134,6 +152,20 @@ def getActive (info):
     elif info['AutoScalingGroups'][0]['DesiredCapacity'] == 0 and info['AutoScalingGroups'][1]['DesiredCapacity'] > 0:
         print 'Green is active'
         return 1
+    elif info['AutoScalingGroups'][0]['DesiredCapacity'] == 0 and info['AutoScalingGroups'][1]['DesiredCapacity'] == 0:
+        print 'Both are inactive'
+        global inactiveAutoscalinggroups
+        inactiveAutoscalinggroups = True
+
+        blueDate = getLaunchconfigDate(info['AutoScalingGroups'][0]['LaunchConfigurationName'])
+        greenDate = getLaunchconfigDate(info['AutoScalingGroups'][1]['LaunchConfigurationName'])
+        # use the ASG with the oldest launch config
+        if blueDate < greenDate:
+            print 'Blue has oldest launchconfig'
+            return 0
+        else:
+            print 'Green has oldest launchconfig'
+            return 1
     else:
         print 'Both are active'
         sys.exit(1)
@@ -150,9 +182,13 @@ def newAutoscaling (info, active, ami, command, projectPath, environment):
     if active == 0:
         blueAMI = getAmi(info['AutoScalingGroups'][active]['LaunchConfigurationName'])
         greenAMI = ami
+        if inactiveAutoscalinggroups: # if we are dealing with empty asgs we override the desired capacity
+            greenDesired = 1
     elif active == 1:
         blueAMI = ami
         greenAMI = getAmi(info['AutoScalingGroups'][active]['LaunchConfigurationName'])
+        if inactiveAutoscalinggroups: # if we are dealing with empty asgs we override the desired capacity
+            blueDesired = 1
     else:
         print 'No acive AMI'
         sys.exit(1)
@@ -160,7 +196,11 @@ def newAutoscaling (info, active, ami, command, projectPath, environment):
     updateAutoscaling (command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath, environment)
 
     # Return the amount of instances we should see in ELBs and ALBs. This is * 2 because we need to think about both autoscaling groups.
-    return info['AutoScalingGroups'][active]['DesiredCapacity'] * 2
+    # unless we are working with empty asgs
+    if inactiveAutoscalinggroups:
+        return 1
+    else:
+        return info['AutoScalingGroups'][active]['DesiredCapacity'] * 2
 
 def oldAutoscaling (info, active, ami, command, projectPath, environment):
     blueAMI = getAmi(info['AutoScalingGroups'][0]['LaunchConfigurationName'])
@@ -172,11 +212,17 @@ def oldAutoscaling (info, active, ami, command, projectPath, environment):
 
         greenMin = info['AutoScalingGroups'][active]['MinSize']
         greenMax = info['AutoScalingGroups'][active]['MaxSize']
-        greenDesired = info['AutoScalingGroups'][active]['DesiredCapacity']
+        if inactiveAutoscalinggroups:
+            greenDesired = 0
+        else:
+            greenDesired = info['AutoScalingGroups'][active]['DesiredCapacity']
     elif active == 1:
         blueMin = info['AutoScalingGroups'][active]['MinSize']
         blueMax = info['AutoScalingGroups'][active]['MaxSize']
-        blueDesired = info['AutoScalingGroups'][active]['DesiredCapacity']
+        if inactiveAutoscalinggroups:
+            blueDesired = 0
+        else:
+            blueDesired = info['AutoScalingGroups'][active]['DesiredCapacity']
 
         greenMin = 0
         greenMax = 0
@@ -195,7 +241,10 @@ def rollbackAutoscaling (info, active, ami, command, projectPath, environment):
     if active == 0:
         blueMin = info['AutoScalingGroups'][0]['MinSize']
         blueMax = info['AutoScalingGroups'][0]['MaxSize']
-        blueDesired = info['AutoScalingGroups'][0]['DesiredCapacity']
+        if inactiveAutoscalinggroups:
+            blueDesired = 0
+        else:
+            blueDesired = info['AutoScalingGroups'][0]['DesiredCapacity']
 
         greenMin = 0
         greenMax = 0
@@ -203,11 +252,35 @@ def rollbackAutoscaling (info, active, ami, command, projectPath, environment):
     elif active == 1:
         greenMin = info['AutoScalingGroups'][1]['MinSize']
         greenMax = info['AutoScalingGroups'][1]['MaxSize']
-        greenDesired = info['AutoScalingGroups'][1]['DesiredCapacity']
+        if inactiveAutoscalinggroups:
+            greenDesired = 0
+        else:
+            greenDesired = info['AutoScalingGroups'][1]['DesiredCapacity']
 
         blueMin = 0
         blueMax = 0
         blueDesired = 0
+    else:
+        print 'No acive AMI'
+        sys.exit(1)
+
+    updateAutoscaling (command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath, environment)
+
+def stopAutoscaling(info, active, ami, command, projectPath, environment):
+    blueMin = info['AutoScalingGroups'][active]['MinSize']
+    blueMax = info['AutoScalingGroups'][active]['MaxSize']
+    blueDesired = 0
+
+    greenMin = info['AutoScalingGroups'][active]['MinSize']
+    greenMax = info['AutoScalingGroups'][active]['MaxSize']
+    greenDesired = 0
+
+    if active == 0:
+        blueAMI = getAmi(info['AutoScalingGroups'][active]['LaunchConfigurationName'])
+        greenAMI = ami
+    elif active == 1:
+        blueAMI = ami
+        greenAMI = getAmi(info['AutoScalingGroups'][active]['LaunchConfigurationName'])
     else:
         print 'No acive AMI'
         sys.exit(1)
