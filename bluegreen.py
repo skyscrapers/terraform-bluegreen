@@ -168,10 +168,10 @@ def getActive(info):
         # use the ASG with the oldest launch config
         if blueDate < greenDate:
             print 'Blue has oldest launchconfig'
-            return 0
+            return 1
         else:
             print 'Green has oldest launchconfig'
-            return 1
+            return 0
     else:
         print 'Both are active'
         sys.exit(1)
