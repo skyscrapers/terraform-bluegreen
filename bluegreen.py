@@ -9,10 +9,10 @@ from datetime import datetime
 
 
 def main(argv):
-    helptext = 'bluegreen.py -f <path to terraform project> -a <ami> -c <command> -t <timeout> -e <environment.tfvars path>'
+    helptext = 'bluegreen.py -f <path to terraform project> -a <ami> -c <command> -t <timeout> -e <environment.tfvars> -i <inactive-desired> <path>'
 
     try:
-        opts, args = getopt.getopt(argv, "hf:a:c:t:e:", ["folder=", "ami=", "command=", "timeout=", "environment="])
+        opts, args = getopt.getopt(argv, "hsf:a:c:t:e:i:", ["folder=", "ami=", "command=", "timeout=", "environment=", "inactive-desired="])
     except getopt.GetoptError:
         print helptext
         sys.exit(2)
@@ -32,6 +32,10 @@ def main(argv):
                 maxTimeout = int(arg)
             elif opt in ("-e", "--environment"):
                 environment = arg
+            elif opt in ("-i", "--inactive-desired"):
+                inactiveDesired = arg
+            elif opt in ("-s"):
+                stopScaling = True
     else:
         print helptext
         sys.exit(2)
@@ -55,6 +59,12 @@ def main(argv):
     if 'environment' not in locals():
         environment = None
 
+    if 'inactiveDesired' not in locals():
+        inactiveDesired = 1
+
+    if 'stopScaling' not in locals():
+        stopScaling = False
+
     # Create a global variable to handle deploys on inactive autoscaling groups
     global inactiveAutoscalinggroups
     inactiveAutoscalinggroups = False
@@ -70,7 +80,7 @@ def main(argv):
     active = getActive(info)
 
     # Bring up the not active autoscaling group with the new AMI
-    desiredInstanceCount = newAutoscaling(info, active, ami, command, projectPath, environment)
+    desiredInstanceCount = newAutoscaling(info, active, ami, command, projectPath, environment, inactiveDesired)
 
     # Retieve all ELBs and ALBs
     elbs = getLoadbalancers(info, 'elb')
@@ -95,7 +105,7 @@ def main(argv):
 
         print 'We can stop the old autoscaling now'
         oldAutoscaling(info, active, ami, command, projectPath, environment)
-        if inactiveAutoscalinggroups:
+        if inactiveAutoscalinggroups and stopScaling:
             print 'Deactivating the autoscaling'
             stopAutoscaling(info, active, ami, command, projectPath, environment)
 
@@ -178,7 +188,7 @@ def getActive(info):
         sys.exit(1)
 
 
-def newAutoscaling(info, active, ami, command, projectPath, environment):
+def newAutoscaling(info, active, ami, command, projectPath, environment, inactiveDesired):
     blueMin = info['AutoScalingGroups'][active]['MinSize']
     blueMax = info['AutoScalingGroups'][active]['MaxSize']
     blueDesired = info['AutoScalingGroups'][active]['DesiredCapacity']
@@ -191,12 +201,12 @@ def newAutoscaling(info, active, ami, command, projectPath, environment):
         blueAMI = getAmi(info['AutoScalingGroups'][active]['LaunchConfigurationName'])
         greenAMI = ami
         if inactiveAutoscalinggroups:  # if we are dealing with empty asgs we override the desired capacity
-            greenDesired = 1
+            greenDesired = inactiveDesired
     elif active == 1:
         blueAMI = ami
         greenAMI = getAmi(info['AutoScalingGroups'][active]['LaunchConfigurationName'])
         if inactiveAutoscalinggroups:  # if we are dealing with empty asgs we override the desired capacity
-            blueDesired = 1
+            blueDesired = inactiveDesired
     else:
         print 'No acive AMI'
         sys.exit(1)
@@ -206,7 +216,7 @@ def newAutoscaling(info, active, ami, command, projectPath, environment):
     # Return the amount of instances we should see in ELBs and ALBs. This is * 2 because we need to think about both autoscaling groups.
     # unless we are working with empty asgs
     if inactiveAutoscalinggroups:
-        return 1
+        return inactiveDesired
     else:
         return info['AutoScalingGroups'][active]['DesiredCapacity'] * 2
 
