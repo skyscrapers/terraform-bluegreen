@@ -1,0 +1,48 @@
+---
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: "python"
+    tag: "2.7.13-alpine"
+
+params:
+  TF_PROJECT_FOLDER:
+  TF_VERSION: "0.10.8"
+  AWS_DEFAULT_REGION: eu-west-1
+  TF_ENVIRONMENT:
+
+inputs:
+- name: terraform-repo
+- name: terraform-bluegreen
+- name: ami
+
+run:
+  path: sh
+  args:
+  - -exc
+  - |
+    # Install dependencies
+    apk add --update unzip curl jq git
+
+    # Install terraform
+    curl -s -o "terraform.zip" "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip"
+    unzip terraform.zip
+    export PATH=$PATH:$PWD
+
+    # Install dependencies of the deployment script
+    pip install -r terraform-bluegreen/requirements.txt
+
+    # Install awscli
+    pip install awscli
+
+    # Extract AMI id from packer manifest
+    AMI_ID=$(cat ami/packer_manifest.json | jq -r ".last_run_uuid as \$last_run_uuid | .builds | map(select(.packer_run_uuid == \$last_run_uuid))[0].artifact_id" | cut -d: -f2)
+
+    WORKDIR=$PWD
+    cd terraform-repo/$TF_PROJECT_FOLDER
+    # Init terraform
+    terraform init
+    terraform workspace select $TF_ENVIRONMENT
+    # Deploy
+    $WORKDIR/terraform-bluegreen/bluegreen.py -f $WORKDIR/terraform-repo/$TF_PROJECT_FOLDER -a $AMI_ID -c apply -t 500 -e $WORKDIR/terraform-repo/$TF_PROJECT_FOLDER/$TF_ENVIRONMENT.tfvars
