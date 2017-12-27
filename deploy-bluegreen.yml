@@ -10,6 +10,7 @@ params:
   TF_PROJECT_FOLDER:
   TF_VERSION: "0.10.8"
   AWS_DEFAULT_REGION: eu-west-1
+  AWS_ACCOUNT_ID:
   TF_ENVIRONMENT:
 
 inputs:
