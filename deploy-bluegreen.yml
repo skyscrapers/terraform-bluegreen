@@ -36,6 +36,15 @@ run:
     # Install awscli
     pip install awscli
 
+    # Assume Role in the destination AWS account if running cross-accounts
+    if [ ! -z "$AWS_ACCOUNT_ID" ]
+    then
+        ASSUMED_ROLE=$(aws sts assume-role --role-arn arn:aws:iam::$AWS_ACCOUNT_ID:role/ops/concourse-terraform --role-session-name concourse-$BUILD_PIPELINE_NAME-$BUILD_JOB_NAME)
+        export AWS_ACCESS_KEY_ID=$(echo "$ASSUMED_ROLE" | jq -r ".Credentials.AccessKeyId")
+        export AWS_SECRET_ACCESS_KEY=$(echo "$ASSUMED_ROLE" | jq -r ".Credentials.SecretAccessKey")
+        export AWS_SESSION_TOKEN=$(echo "$ASSUMED_ROLE" | jq -r ".Credentials.SessionToken")
+    fi
+
     # Extract AMI id from packer manifest
     AMI_ID=$(cat ami/packer_manifest.json | jq -r ".last_run_uuid as \$last_run_uuid | .builds | map(select(.packer_run_uuid == \$last_run_uuid))[0].artifact_id" | cut -d: -f2)
 
