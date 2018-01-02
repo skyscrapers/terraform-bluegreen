@@ -45,4 +45,4 @@ run:
     terraform init
     terraform workspace select $TF_ENVIRONMENT
     # Deploy
-    $WORKDIR/terraform-bluegreen/bluegreen.py -f $WORKDIR/terraform-repo/$TF_PROJECT_FOLDER -a $AMI_ID -c apply -t 500 -e $WORKDIR/terraform-repo/$TF_PROJECT_FOLDER/$TF_ENVIRONMENT.tfvars
+    $WORKDIR/terraform-bluegreen/bluegreen.py -f $WORKDIR/terraform-repo/$TF_PROJECT_FOLDER -a $AMI_ID -c "apply -auto-approve" -t 500 -e $WORKDIR/terraform-repo/$TF_PROJECT_FOLDER/$TF_ENVIRONMENT.tfvars
