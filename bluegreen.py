@@ -89,7 +89,7 @@ def main(argv):
     # Retrieve autoscaling groups information (we need to do this again because the launchconig has changed and we need this in a later phase)
     info = getAutoscalingInfo(agBlue, agGreen)
 
-    if command == 'apply':
+    if 'apply' in command:
         print 'Waiting for 30 seconds to get autoscaling status'
         time.sleep(30)
         timeout = 30
