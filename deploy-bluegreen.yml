@@ -11,11 +11,13 @@ params:
   TF_VERSION: "0.11.7"
   AWS_DEFAULT_REGION: eu-west-1
   TF_ENVIRONMENT:
+  AMI_ID: 
 
 inputs:
 - name: terraform-repo
 - name: terraform-bluegreen
 - name: ami
+  optional: true
 
 run:
   path: sh
@@ -37,7 +39,9 @@ run:
     pip install awscli
 
     # Extract AMI id from packer manifest
-    AMI_ID=$(cat ami/packer_manifest.json | jq -r ".last_run_uuid as \$last_run_uuid | .builds | map(select(.packer_run_uuid == \$last_run_uuid))[0].artifact_id" | cut -d: -f2)
+    if [ -d "ami" ]; then
+      AMI_ID=$(cat ami/packer_manifest.json | jq -r ".last_run_uuid as \$last_run_uuid | .builds | map(select(.packer_run_uuid == \$last_run_uuid))[0].artifact_id" | cut -d: -f2)
+    fi
 
     WORKDIR=$PWD
     cd terraform-repo/$TF_PROJECT_FOLDER
