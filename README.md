@@ -34,12 +34,34 @@ module "bluegreen" {
 }
 ```
 
-## cpu-scaling
+## scaling
 Terraform module to setup alarms and autoscaling triggers for autoscaling
 
 ### Variables
 
-See the [cpu-scaling/variables.tf](cpu-scaling/variables.tf) file.
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+| adjustment\_down | The number of instances to remove when the alarm is triggered (the value has to be negative) | string | `"-1"` | no |
+| adjustment\_type | What typ of adjustment needs to happen | string | `"ChangeInCapacity"` | no |
+| adjustment\_up | The number of instances to add when the alarm is triggered | string | `"1"` | no |
+| autoscaling\_group\_name | The name of the AS group this config needs to be applied | list | n/a | yes |
+| cooldown\_down | The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start. | string | `"600"` | no |
+| cooldown\_up | The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start. | string | `"300"` | no |
+| dimension\_name |  | string | `"AutoScalingGroupName"` | no |
+| dimension\_value |  | string | `"false"` | no |
+| environment | Environment to deploy on | string | n/a | yes |
+| evaluation\_periods | the number of samples to evaluate | string | `"4"` | no |
+| metric\_name | The metric the scaling is based upon | string | `"CPUUtilization"` | no |
+| name | Name of the stack | string | n/a | yes |
+| namespace | the namespace of the cloudwatch metric | string | `"AWS/EC2"` | no |
+| num\_asg | the number of autoscaling groups passed | string | `"2"` | no |
+| period\_down | he period in seconds over which the selected metric statistic is applied. | string | `"120"` | no |
+| period\_up | he period in seconds over which the selected metric statistic is applied. | string | `"60"` | no |
+| policy\_type | The policy type, either SimpleScaling or StepScaling | string | `"SimpleScaling"` | no |
+| project | Project name to use | string | n/a | yes |
+| statistic | The statistic to apply to the alarm's associated metric. Either of the following is supported: | string | `"Average"` | no |
+| threshold\_down | The metric value to scale down | string | `"30"` | no |
+| threshold\_up | The metric value to scale up | string | `"80"` | no |
 
 ### Outputs
 /
@@ -47,8 +69,8 @@ See the [cpu-scaling/variables.tf](cpu-scaling/variables.tf) file.
 ### Example
 
 ```
-module "cpu-scaling" {
-  source = "github.com/skyscrapers/terraform-bluegreen//cpu-scaling"
+module "scaling" {
+  source = "github.com/skyscrapers/terraform-bluegreen//scaling"
   project = "example"
   name = "app"
   environment = "production"

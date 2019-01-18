@@ -5,17 +5,17 @@ variable "evaluation_periods" {
 
 variable "namespace" {
   default     = "AWS/EC2"
-  description = "the namespace of the cpu cloudwatch metric"
+  description = "the namespace of the cloudwatch metric"
 }
 
 variable "period_down" {
   default     = "120"
-  description = "he period in seconds over which the CPUUtilization statistic is applied."
+  description = "he period in seconds over which the selected metric statistic is applied."
 }
 
 variable "period_up" {
   default     = "60"
-  description = "he period in seconds over which the CPUUtilization statistic is applied."
+  description = "he period in seconds over which the selected metric statistic is applied."
 }
 
 variable "statistic" {
@@ -25,12 +25,12 @@ variable "statistic" {
 
 variable "threshold_up" {
   default     = "80"
-  description = "The cpu value to scale up"
+  description = "The metric value to scale up"
 }
 
 variable "threshold_down" {
   default     = "30"
-  description = "The cpu value to scale down"
+  description = "The metric value to scale down"
 }
 
 variable "policy_type" {
