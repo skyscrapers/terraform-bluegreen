@@ -9,10 +9,10 @@ from datetime import datetime
 
 
 def main(argv):
-    helptext = 'bluegreen.py -f <path to terraform project> -a <ami> -c <command> -t <timeout> -e <environment.tfvars> -i <inactive-desired> <path>'
+    helptext = 'bluegreen.py -f <path to terraform project> -a <ami> -c <command> -t <timeout> -e <environment.tfvars> -i <inactive-desired> [-r <assume-role-arn>] <path>'
 
     try:
-        opts, args = getopt.getopt(argv, "hsf:a:c:t:e:i:", ["folder=", "ami=", "command=", "timeout=", "environment=", "inactive-desired="])
+        opts, args = getopt.getopt(argv, "hsf:a:c:t:e:i:r:", ["folder=", "ami=", "command=", "timeout=", "environment=", "inactive-desired=", "role-arn="])
     except getopt.GetoptError:
         print helptext
         sys.exit(2)
@@ -34,6 +34,8 @@ def main(argv):
                 environment = arg
             elif opt in ("-i", "--inactive-desired"):
                 inactiveDesired = arg
+            elif opt in ("-r", "--role-arn"):
+                assumeRoleArn = arg
             elif opt in ("-s"):
                 stopScaling = True
     else:
@@ -62,6 +64,9 @@ def main(argv):
     if 'inactiveDesired' not in locals():
         inactiveDesired = 1
 
+    if 'assumeRoleArn' not in locals():
+        assumeRoleArn = None
+
     if 'stopScaling' not in locals():
         stopScaling = False
 
@@ -72,6 +77,10 @@ def main(argv):
     # Retrieve autoscaling group names
     agBlue = getTerraformOutput(projectPath, 'blue_asg_id')
     agGreen = getTerraformOutput(projectPath, 'green_asg_id')
+
+    # Get a boto3 session
+    global awsSession
+    awsSession = getBotoSession(assumeRoleArn)
 
     # Retrieve autoscaling groups information
     info = getAutoscalingInfo(agBlue, agGreen)
@@ -109,6 +118,23 @@ def main(argv):
             print 'Deactivating the autoscaling'
             stopAutoscaling(info, active, ami, command, projectPath, environment)
 
+def getBotoSession(assumeRoleArn):
+    if assumeRoleArn:
+        sts_client = boto3.client('sts')
+
+        # Call the assume_role method of the STSConnection object and pass the role
+        # ARN and a role session name.
+        assumed_role_object = sts_client.assume_role(
+            RoleArn = assumeRoleArn
+        )
+
+        return boto3.Session(
+            aws_access_key_id = credentials['AccessKeyId'],
+            aws_secret_access_key = credentials['SecretAccessKey'],
+            aws_session_token = credentials['SessionToken'],
+        )
+    else:
+        return boto3.Session()
 
 def getTerraformOutput(projectPath, output):
     process = subprocess.Popen('terraform output ' + output, shell=True, cwd=projectPath, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -122,7 +148,7 @@ def getTerraformOutput(projectPath, output):
 
 
 def getAutoscalingInfo(blue, green):
-    client = boto3.client('autoscaling')
+    client = awsSession.client('autoscaling')
     response = client.describe_auto_scaling_groups(
         AutoScalingGroupNames=[
             blue,
@@ -141,7 +167,7 @@ def getLoadbalancers(info, type):
 
 
 def getAmi(launchconfig):
-    client = boto3.client('autoscaling')
+    client = awsSession.client('autoscaling')
     response = client.describe_launch_configurations(
         LaunchConfigurationNames=[
             launchconfig,
@@ -152,7 +178,7 @@ def getAmi(launchconfig):
 
 
 def getLaunchconfigDate(launchconfig):
-    client = boto3.client('autoscaling')
+    client = awsSession.client('autoscaling')
     response = client.describe_launch_configurations(
         LaunchConfigurationNames=[
             launchconfig,
@@ -322,7 +348,7 @@ def updateAutoscaling(command, blueMax, blueMin, blueDesired, blueAMI, greenMax,
 
 
 def checkScalingStatus(elbs, albs, desiredInstanceCount):
-    client = boto3.client('elb')
+    client = awsSession.client('elb')
     for elb in elbs:
         response = client.describe_instance_health(
             LoadBalancerName=elb
@@ -334,7 +360,7 @@ def checkScalingStatus(elbs, albs, desiredInstanceCount):
             print 'ELB: ' + state['State']
             if state['State'] != 'InService':
                 return False
-    client = boto3.client('elbv2')
+    client = awsSession.client('elbv2')
     for alb in albs:
         response = client.describe_target_health(
             TargetGroupArn=alb,

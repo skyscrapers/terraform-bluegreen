@@ -11,6 +11,7 @@ params:
   TF_VERSION: "0.11.7"
   AWS_DEFAULT_REGION: eu-west-1
   TF_ENVIRONMENT:
+  ASSUME_ROLE_ARN:
 
 inputs:
 - name: terraform-repo
@@ -45,4 +46,4 @@ run:
     terraform init
     terraform workspace select $TF_ENVIRONMENT
     # Deploy
-    $WORKDIR/terraform-bluegreen/bluegreen.py -f $WORKDIR/terraform-repo/$TF_PROJECT_FOLDER -a $AMI_ID -c "apply -auto-approve" -t 500 -e $WORKDIR/terraform-repo/$TF_PROJECT_FOLDER/$TF_ENVIRONMENT.tfvars
+    $WORKDIR/terraform-bluegreen/bluegreen.py -f $WORKDIR/terraform-repo/$TF_PROJECT_FOLDER -a $AMI_ID -c "apply -auto-approve" -t 500 -e $WORKDIR/terraform-repo/$TF_PROJECT_FOLDER/$TF_ENVIRONMENT.tfvars -r $ASSUME_ROLE_ARN
