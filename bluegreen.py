@@ -9,7 +9,7 @@ from datetime import datetime
 
 
 def main(argv):
-    helptext = 'bluegreen.py -f <path to terraform project> -a <ami> -c <command> -t <timeout> -e <environment.tfvars> -i <inactive-desired> [-r <assume-role-arn>] <path>'
+    helptext = 'bluegreen.py -f <path to terraform project> -a <ami> -c <command> -t <timeout> -e <environment.tfvars> -i <inactive-desired> [-r <assume-role-arn>]'
 
     try:
         opts, args = getopt.getopt(argv, "hsf:a:c:t:e:i:r:", ["folder=", "ami=", "command=", "timeout=", "environment=", "inactive-desired=", "role-arn="])
@@ -125,13 +125,14 @@ def getBotoSession(assumeRoleArn):
         # Call the assume_role method of the STSConnection object and pass the role
         # ARN and a role session name.
         assumed_role_object = sts_client.assume_role(
-            RoleArn = assumeRoleArn
+            RoleArn = assumeRoleArn,
+            RoleSessionName = "bluegreen"
         )
 
         return boto3.Session(
-            aws_access_key_id = credentials['AccessKeyId'],
-            aws_secret_access_key = credentials['SecretAccessKey'],
-            aws_session_token = credentials['SessionToken'],
+            aws_access_key_id = assumed_role_object['Credentials']['AccessKeyId'],
+            aws_secret_access_key = assumed_role_object['Credentials']['SecretAccessKey'],
+            aws_session_token = assumed_role_object['Credentials']['SessionToken'],
         )
     else:
         return boto3.Session()
