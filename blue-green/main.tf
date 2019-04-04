@@ -1,11 +1,11 @@
 module "blue" {
-  source           = "../single-stack"
-  color            = "blue"
-  max_size         = "${var.blue_max_size}"
-  min_size         = "${var.blue_min_size}"
-  desired_capacity = "${var.blue_desired_capacity}"
-  ami              = "${var.blue_ami}"
-
+  source                      = "../single-stack"
+  color                       = "blue"
+  max_size                    = "${var.blue_max_size}"
+  min_size                    = "${var.blue_min_size}"
+  desired_capacity            = "${var.blue_desired_capacity}"
+  ami                         = "${var.blue_ami}"
+  spot_price                  = "${var.spot_price}"
   loadbalancers               = "${var.loadbalancers}"
   project                     = "${var.project}"
   name                        = "${var.name}"
@@ -27,13 +27,13 @@ module "blue" {
 }
 
 module "green" {
-  source           = "../single-stack"
-  color            = "green"
-  max_size         = "${var.green_max_size}"
-  min_size         = "${var.green_min_size}"
-  desired_capacity = "${var.green_desired_capacity}"
-  ami              = "${var.green_ami}"
-
+  source                      = "../single-stack"
+  color                       = "green"
+  max_size                    = "${var.green_max_size}"
+  min_size                    = "${var.green_min_size}"
+  desired_capacity            = "${var.green_desired_capacity}"
+  ami                         = "${var.green_ami}"
+  spot_price                  = "${var.spot_price}"
   loadbalancers               = "${var.loadbalancers}"
   project                     = "${var.project}"
   name                        = "${var.name}"

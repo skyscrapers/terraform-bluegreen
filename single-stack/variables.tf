@@ -109,3 +109,8 @@ variable "tags" {
   type        = "list"
   default     = []
 }
+
+variable "spot_price" {
+  description = "Spot price you want to pay for your instances. By default this is empty and we will use on-demand instances"
+  default     = ""
+}
