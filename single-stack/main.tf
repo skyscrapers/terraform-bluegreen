@@ -6,6 +6,7 @@ resource "aws_launch_configuration" "bluegreen_launchconfig" {
   iam_instance_profile        = "${var.iam_instance_profile}"
   associate_public_ip_address = "${var.associate_public_ip_address}"
   user_data                   = "${var.user_data}"
+  spot_price                  = "${var.spot_price}"
 
   root_block_device {
     volume_type           = "${var.disk_volume_type}"

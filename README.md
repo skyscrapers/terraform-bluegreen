@@ -1,20 +1,50 @@
 # terraform-bluegreen
 Terraform module to setup blue / green deployments
 
-##blue-green
+## blue-green
 
-### Variables
+### Inputs
 
-See the [blue-green/variables.tf](blue-green/variables.tf) file.
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+| associate\_public\_ip\_address | (Optional) Associate a public ip address with an instance in a VPC | string | `"false"` | no |
+| blue\_ami | (Required) The EC2 image ID to launch in the blue autoscaling group | string | n/a | yes |
+| blue\_desired\_capacity | (Required) The number of Amazon EC2 instances that should be running in the blue autoscaling roup | string | n/a | yes |
+| blue\_max\_size | (Required) The maximum size of the blue autoscaling group | string | n/a | yes |
+| blue\_min\_size | (Required) The minimum size of the blue autoscaling group | string | n/a | yes |
+| disk\_volume\_size | (Optional) The size of the volume in gigabytes | string | `"8"` | no |
+| disk\_volume\_type | (Optional) The type of the volume. Default is standard | string | `"standard"` | no |
+| environment | Environment to deploy on | string | n/a | yes |
+| green\_ami | (Required) The EC2 image ID to launch in the green autoscaling group | string | n/a | yes |
+| green\_desired\_capacity | (Required) The number of Amazon EC2 instances that should be running in the green autoscaling roup | string | n/a | yes |
+| green\_max\_size | (Required) The maximum size of the green autoscaling group | string | n/a | yes |
+| green\_min\_size | (Required) The minimum size of the green autoscaling group | string | n/a | yes |
+| health\_check\_grace\_period | (Optional, Default: 300) Time (in seconds) after instance comes into service before checking health | string | `"300"` | no |
+| health\_check\_type | The health check type to apply to the Autoscaling groups. | string | `"ELB"` | no |
+| iam\_instance\_profile | (Optional) The IAM instance profile to associate with launched instances | string | `""` | no |
+| instance\_type | (Required) The size of instance to launch | string | n/a | yes |
+| key\_name | (Optional) The key name that should be used for the instance | string | `""` | no |
+| loadbalancers | (Optional) A list of load balancer names to add to the autoscaling groups | list | `<list>` | no |
+| name | Name of the stack | string | n/a | yes |
+| project | Project name to use | string | n/a | yes |
+| security\_groups | (Optional) A list of associated security group IDS | list | `<list>` | no |
+| spot\_price | Spot price you want to pay for your instances. By default this is empty and we will use on-demand instances | string | `""` | no |
+| subnets | (Optional) A list of subnet IDs to launch resources in | list | `<list>` | no |
+| tags | (Optional, Default: []) List of map of additional tags | list | `<list>` | no |
+| target\_group\_arns | A list of aws_alb_target_group ARNs, for use with Application Load Balancing | list | `<list>` | no |
+| termination\_policies | (Optional, Default: ['Default']) Order in termination policies to apply when choosing instances to terminate. | list | `<list>` | no |
+| user\_data | (Optional) The user data to provide when launching the instance | string | `"# Hello World"` | no |
 
 ### Outputs
 
-* `blue_asg_id`: (Number) blue autoscaling group id
-* `green_asg_id`: (Number) green autoscaling group id
+| Name | Description |
+|------|-------------|
+| blue\_asg\_id |  |
+| green\_asg\_id |  |
 
 ### Example
 
-```
+```terraform
 module "bluegreen" {
   source = "github.com/skyscrapers/terraform-bluegreen//blue-green"
   project = "example"
@@ -35,9 +65,10 @@ module "bluegreen" {
 ```
 
 ## scaling
+
 Terraform module to setup alarms and autoscaling triggers for autoscaling
 
-### Variables
+### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
@@ -63,12 +94,9 @@ Terraform module to setup alarms and autoscaling triggers for autoscaling
 | threshold\_down | The metric value to scale down | string | `"30"` | no |
 | threshold\_up | The metric value to scale up | string | `"80"` | no |
 
-### Outputs
-/
-
 ### Example
 
-```
+```terraform
 module "scaling" {
   source = "github.com/skyscrapers/terraform-bluegreen//scaling"
   project = "example"
@@ -83,8 +111,9 @@ module "scaling" {
 The `bluegreen.py` script performs a bluegreen deployment of the selected terraform stack. It only works with Python 2.7.
 The blue-green deployment script expects certain inputs and outputs in the Terraform project you want to deploy in a blue-green fashion.
 
-### Required outputs:
-```
+### Required outputs
+
+```terraform
 output "blue_asg_id" {
   value = "${module.<blue-green-module-name>.blue_asg_id}"
 }
@@ -93,8 +122,10 @@ output "green_asg_id" {
   value = "${module.<blue-green-module-name>.green_asg_id}"
 }
 ```
-### Required variables:
-```
+
+### Required variables
+
+```terraform
 variable "blue_max_size" {
   description = "max instances blue"
 }
