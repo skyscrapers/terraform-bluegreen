@@ -31,7 +31,8 @@ resource "aws_autoscaling_group" "bluegreen_asg" {
   health_check_grace_period = "${var.health_check_grace_period}"
   termination_policies      = ["${var.termination_policies}"]
   target_group_arns         = ["${var.target_group_arns}"]
-
+  wait_for_capacity_timeout = "${var.wait_for_capacity_timeout}"
+  
   tags = ["${concat(
   list(
     map("key", "Environment", "value", "${var.environment}", "propagate_at_launch", true),

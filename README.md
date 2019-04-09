@@ -34,13 +34,14 @@ Terraform module to setup blue / green deployments
 | target\_group\_arns | A list of aws_alb_target_group ARNs, for use with Application Load Balancing | list | `<list>` | no |
 | termination\_policies | (Optional, Default: ['Default']) Order in termination policies to apply when choosing instances to terminate. | list | `<list>` | no |
 | user\_data | (Optional) The user data to provide when launching the instance | string | `"# Hello World"` | no |
+| wait\_for\_capacity\_timeout | A maximum duration that Terraform should wait for ASG instances to be healthy before timing out. Setting this to 0 causes Terraform to skip all Capacity Waiting behavior. | string | `"10m"` | no |
 
 ### Outputs
 
 | Name | Description |
 |------|-------------|
-| blue\_asg\_id |  |
-| green\_asg\_id |  |
+| blue\_asg\_id | Blue autoscaling group id |
+| green\_asg\_id | Green autoscaling group id |
 
 ### Example
 
