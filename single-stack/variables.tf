@@ -114,3 +114,8 @@ variable "spot_price" {
   description = "Spot price you want to pay for your instances. By default this is empty and we will use on-demand instances"
   default     = ""
 }
+
+variable "wait_for_capacity_timeout" {
+  description = "A maximum duration that Terraform should wait for ASG instances to be healthy before timing out. Setting this to 0 causes Terraform to skip all Capacity Waiting behavior."
+  default     = "10m"
+}

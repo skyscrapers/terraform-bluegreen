@@ -24,6 +24,7 @@ module "blue" {
   target_group_arns           = "${var.target_group_arns}"
   health_check_type           = "${var.health_check_type}"
   tags                        = "${var.tags}"
+  wait_for_capacity_timeout   = "${var.wait_for_capacity_timeout}"
 }
 
 module "green" {
@@ -52,4 +53,5 @@ module "green" {
   target_group_arns           = "${var.target_group_arns}"
   health_check_type           = "${var.health_check_type}"
   tags                        = "${var.tags}"
+  wait_for_capacity_timeout   = "${var.wait_for_capacity_timeout}"
 }
