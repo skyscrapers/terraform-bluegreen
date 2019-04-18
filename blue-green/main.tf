@@ -23,6 +23,7 @@ module "blue" {
   health_check_type           = "${var.health_check_type}"
   wait_for_capacity_timeout   = "${var.wait_for_capacity_timeout}"
   tags                        = "${var.tags}"
+  initial_lifecycle_hooks     = ["${var.initial_lifecycle_hooks}"]
 }
 
 module "green" {
@@ -50,4 +51,5 @@ module "green" {
   health_check_type           = "${var.health_check_type}"
   wait_for_capacity_timeout   = "${var.wait_for_capacity_timeout}"
   tags                        = "${var.tags}"
+  initial_lifecycle_hooks     = ["${var.initial_lifecycle_hooks}"]
 }

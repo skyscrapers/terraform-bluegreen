@@ -36,6 +36,7 @@ resource "aws_autoscaling_group" "bluegreen_asg" {
   termination_policies      = ["${var.termination_policies}"]
   target_group_arns         = ["${var.target_group_arns}"]
   wait_for_capacity_timeout = "${var.wait_for_capacity_timeout}"
+  initial_lifecycle_hook    = ["${var.initial_lifecycle_hooks}"]
 
   tags = ["${concat(
   list(

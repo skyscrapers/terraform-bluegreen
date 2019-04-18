@@ -8,10 +8,12 @@ output "green_asg_id" {
   value       = "${module.green.asg_id}"
 }
 
-output "nondeterministic_blue_asg_name" {
-  value = "${module.blue.nondeterministic_asg_name}"
+output "nonbinding_blue_asg_name" {
+  description = "This is the raw blue autoscaling group name, without creating a dependency with the actual autoscaling group resource"
+  value       = "${module.blue.nonbinding_asg_name}"
 }
 
-output "nondeterministic_green_asg_name" {
-  value = "${module.green.nondeterministic_asg_name}"
+output "nonbinding_green_asg_name" {
+  description = "This is the raw green autoscaling group name, without creating a dependency with the actual autoscaling group resource"
+  value       = "${module.green.nonbinding_asg_name}"
 }
