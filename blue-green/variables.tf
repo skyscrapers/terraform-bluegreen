@@ -1,106 +1,117 @@
-variable "project" {
-  description = "Project name to use"
-}
-
 variable "name" {
-  description = "Name of the stack"
+  description = "Name of the Auto Scaling Groups"
 }
 
-variable "environment" {
-  description = "Environment to deploy on"
+variable "blue_max_size" {
+  description = "The maximum size of the blue autoscaling group"
+}
+
+variable "blue_min_size" {
+  description = "The minimum size of the blue autoscaling group"
+}
+
+variable "blue_desired_capacity" {
+  description = "The number of Amazon EC2 instances that should be running in the blue autoscaling roup"
+}
+
+variable "blue_instance_type" {
+  description = "The Blue instance type to launch"
 }
 
 variable "blue_ami" {
-  description = "(Required) The EC2 image ID to launch in the blue autoscaling group"
+  description = "The EC2 image ID to launch in the Blue autoscaling group"
+}
+
+variable "blue_user_data" {
+  description = "The user data to provide when launching the Blue instances"
+  default     = "# Hello World"
+}
+
+variable "blue_disk_volume_size" {
+  description = "The size of the EBS volume in GB for the Blue instances"
+  default     = "8"
+}
+
+variable "blue_disk_volume_type" {
+  description = "The EBS volume type for the Blue instances"
+  default     = "gp2"
+}
+
+variable "green_max_size" {
+  description = "The maximum size of the green autoscaling group"
+}
+
+variable "green_min_size" {
+  description = "The minimum size of the green autoscaling group"
+}
+
+variable "green_desired_capacity" {
+  description = "The number of Amazon EC2 instances that should be running in the green autoscaling roup"
+}
+
+variable "green_instance_type" {
+  description = "The Green instance type to launch"
 }
 
 variable "green_ami" {
-  description = "(Required) The EC2 image ID to launch in the green autoscaling group"
+  description = "The EC2 image ID to launch in the Green autoscaling group"
 }
 
-variable "instance_type" {
-  description = "(Required) The size of instance to launch"
+variable "green_user_data" {
+  description = "The user data to provide when launching the Green instances"
+  default     = "# Hello World"
+}
+
+variable "green_disk_volume_size" {
+  description = "The size of the EBS volume in GB for the Green instances"
+  default     = "8"
+}
+
+variable "green_disk_volume_type" {
+  description = "The EBS volume type for the Green instances"
+  default     = "gp2"
 }
 
 variable "key_name" {
-  description = "(Optional) The key name that should be used for the instance"
+  description = "The key name that should be used for the instance"
   default     = ""
 }
 
 variable "loadbalancers" {
   type        = "list"
-  description = "(Optional) A list of load balancer names to add to the autoscaling groups"
+  description = "A list of load balancer names to add to the autoscaling groups"
   default     = []
 }
 
 variable "security_groups" {
   type        = "list"
-  description = "(Optional) A list of associated security group IDS"
+  description = "A list of associated security group IDS"
   default     = []
 }
 
 variable "iam_instance_profile" {
-  description = "(Optional) The IAM instance profile to associate with launched instances"
+  description = "The IAM instance profile to associate with launched instances"
   default     = ""
 }
 
 variable "associate_public_ip_address" {
-  description = "(Optional) Associate a public ip address with an instance in a VPC"
+  description = "Associate a public ip address with an instance in a VPC"
   default     = false
 }
 
-variable "user_data" {
-  description = "(Optional) The user data to provide when launching the instance"
-  default     = "# Hello World"
-}
-
-variable "disk_volume_size" {
-  description = "(Optional) The size of the volume in gigabytes"
-  default     = "8"
-}
-
-variable "disk_volume_type" {
-  description = "(Optional) The type of the volume. Default is standard"
-  default     = "standard"
-}
-
 variable "subnets" {
-  description = "(Optional) A list of subnet IDs to launch resources in"
+  description = "A list of subnet IDs to launch resources in"
   type        = "list"
   default     = []
 }
 
-variable "blue_max_size" {
-  description = "(Required) The maximum size of the blue autoscaling group"
-}
-
-variable "blue_min_size" {
-  description = "(Required) The minimum size of the blue autoscaling group"
-}
-
-variable "blue_desired_capacity" {
-  description = "(Required) The number of Amazon EC2 instances that should be running in the blue autoscaling roup"
-}
-
-variable "green_max_size" {
-  description = "(Required) The maximum size of the green autoscaling group"
-}
-
-variable "green_min_size" {
-  description = "(Required) The minimum size of the green autoscaling group"
-}
-
-variable "green_desired_capacity" {
-  description = "(Required) The number of Amazon EC2 instances that should be running in the green autoscaling roup"
-}
-
 variable "health_check_grace_period" {
-  description = "(Optional, Default: 300) Time (in seconds) after instance comes into service before checking health"
+  description = "Time (in seconds) after instance comes into service before checking health"
   default     = "300"
 }
 
 variable "termination_policies" {
-  description = "(Optional, Default: ['Default']) Order in termination policies to apply when choosing instances to terminate."
+  description = "Order in termination policies to apply when choosing instances to terminate."
   type        = "list"
   default     = ["Default"]
 }
@@ -117,7 +128,7 @@ variable "health_check_type" {
 }
 
 variable "tags" {
-  description = "(Optional, Default: []) List of map of additional tags"
+  description = "List of map of additional tags"
   type        = "list"
   default     = []
 }
@@ -128,6 +139,6 @@ variable "spot_price" {
 }
 
 variable "wait_for_capacity_timeout" {
-  description = " A maximum duration that Terraform should wait for ASG instances to be healthy before timing out. Setting this to 0 causes Terraform to skip all Capacity Waiting behavior."
+  description = "A maximum duration that Terraform should wait for ASG instances to be healthy before timing out. Setting this to 0 causes Terraform to skip all Capacity Waiting behavior."
   default     = "10m"
 }

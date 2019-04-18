@@ -9,10 +9,10 @@ from datetime import datetime
 
 
 def main(argv):
-    helptext = 'bluegreen.py -f <path to terraform project> -a <ami> -c <command> -t <timeout> -e <environment.tfvars> -i <inactive-desired> [-r <assume-role-arn>]'
+    helptext = 'bluegreen.py -f <path to terraform project> -a <ami> -c <command> -t <timeout> -e <environment.tfvars> -i <inactive-desired> [-r <assume-role-arn>] [--stack=<standards stack path>]'
 
     try:
-        opts, args = getopt.getopt(argv, "hsf:a:c:t:e:i:r:", ["folder=", "ami=", "command=", "timeout=", "environment=", "inactive-desired=", "role-arn="])
+        opts, args = getopt.getopt(argv, "hsf:a:c:t:e:i:r:", ["folder=", "stack=","ami=", "command=", "timeout=", "environment=", "inactive-desired=", "role-arn="])
     except getopt.GetoptError:
         print helptext
         sys.exit(2)
@@ -24,6 +24,8 @@ def main(argv):
                 sys.exit(2)
             elif opt in ("-f", "--folder"):
                 projectPath = arg
+            elif opt in ("--stack"):
+                stackPath = arg
             elif opt in ("-a", "--ami"):
                 ami = arg
             elif opt in ("-c", "--command"):
@@ -53,6 +55,9 @@ def main(argv):
         print helptext
         sys.exit(2)
 
+    if 'stackPath' not in locals():
+        stackPath = None
+
     if 'ami' not in locals():
         print 'Please give a new AMI as argument'
         print helptext
@@ -75,8 +80,8 @@ def main(argv):
     inactiveAutoscalinggroups = False
 
     # Retrieve autoscaling group names
-    agBlue = getTerraformOutput(projectPath, 'blue_asg_id')
-    agGreen = getTerraformOutput(projectPath, 'green_asg_id')
+    agBlue = getTerraformOutput(projectPath, stackPath, 'blue_asg_id')
+    agGreen = getTerraformOutput(projectPath, stackPath, 'green_asg_id')
 
     # Get a boto3 session
     global awsSession
@@ -137,8 +142,12 @@ def getBotoSession(assumeRoleArn):
     else:
         return boto3.Session()
 
-def getTerraformOutput(projectPath, output):
-    process = subprocess.Popen('terraform output ' + output, shell=True, cwd=projectPath, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+def getTerraformOutput(projectPath, stackPath, output):
+    command = 'terraform output ' + output
+    if stackPath is not None:
+        command = '%s %s' % (command, stackPath)
+    print command
+    process = subprocess.Popen(command, shell=True, cwd=projectPath, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     std_out, std_err = process.communicate()
     if process.returncode != 0:
         err_msg = "%s. Code: %s" % (std_err.strip(), process.returncode)
@@ -335,8 +344,10 @@ def stopAutoscaling(info, active, ami, command, projectPath, environment):
     updateAutoscaling(command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath, environment)
 
 
-def updateAutoscaling(command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath, environment):
+def updateAutoscaling(command, blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, projectPath, stackPath, environment):
     command = 'terraform %s %s' % (command, buildTerraformVars(blueMax, blueMin, blueDesired, blueAMI, greenMax, greenMin, greenDesired, greenAMI, environment))
+    if stackPath is not None:
+        command = '%s %s' % (command, stackPath)
     print command
     process = subprocess.Popen(command, shell=True, cwd=projectPath, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = process.communicate()

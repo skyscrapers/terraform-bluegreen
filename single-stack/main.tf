@@ -20,7 +20,7 @@ resource "aws_launch_configuration" "bluegreen_launchconfig" {
 }
 
 resource "aws_autoscaling_group" "bluegreen_asg" {
-  name                      = "asg-${var.project}-${var.name}-${var.environment}-${var.color}"
+  name                      = "${var.name}-${var.color}"
   launch_configuration      = "${aws_launch_configuration.bluegreen_launchconfig.id}"
   vpc_zone_identifier       = ["${var.subnets}"]
   load_balancers            = ["${var.loadbalancers}"]
@@ -32,13 +32,11 @@ resource "aws_autoscaling_group" "bluegreen_asg" {
   termination_policies      = ["${var.termination_policies}"]
   target_group_arns         = ["${var.target_group_arns}"]
   wait_for_capacity_timeout = "${var.wait_for_capacity_timeout}"
-  
+
   tags = ["${concat(
   list(
-    map("key", "Environment", "value", "${var.environment}", "propagate_at_launch", true),
-    map("key", "Project", "value", "${var.project}", "propagate_at_launch", true),
+    map("key", "Name", "value", "${var.name}-${var.color}", "propagate_at_launch", true),
     map("key", "Type", "value", "${var.name}", "propagate_at_launch", true),
-    map("key", "Name", "value", "${var.project}-${var.name}-${var.environment}-${var.color}", "propagate_at_launch", true),
     map("key", "Color", "value", "${var.color}", "propagate_at_launch", true)
   ),
   var.tags)
