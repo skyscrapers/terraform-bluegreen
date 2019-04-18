@@ -1,5 +1,5 @@
 variable "name" {
-  description = "Name of the Auto Scaling Groups"
+  description = "Name for the created resources"
 }
 
 variable "evaluation_periods" {
