@@ -19,8 +19,12 @@ resource "aws_launch_configuration" "bluegreen_launchconfig" {
   }
 }
 
+locals {
+  asg_name = "${var.name}-${var.color}"
+}
+
 resource "aws_autoscaling_group" "bluegreen_asg" {
-  name                      = "${var.name}-${var.color}"
+  name                      = "${local.asg_name}"
   launch_configuration      = "${aws_launch_configuration.bluegreen_launchconfig.id}"
   vpc_zone_identifier       = ["${var.subnets}"]
   load_balancers            = ["${var.loadbalancers}"]
@@ -35,7 +39,7 @@ resource "aws_autoscaling_group" "bluegreen_asg" {
 
   tags = ["${concat(
   list(
-    map("key", "Name", "value", "${var.name}-${var.color}", "propagate_at_launch", true),
+    map("key", "Name", "value", "${local.asg_name}", "propagate_at_launch", true),
     map("key", "Type", "value", "${var.name}", "propagate_at_launch", true),
     map("key", "Color", "value", "${var.color}", "propagate_at_launch", true)
   ),
