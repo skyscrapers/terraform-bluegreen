@@ -28,6 +28,7 @@ Terraform module to setup blue / green deployments
 | health\_check\_grace\_period | Time (in seconds) after instance comes into service before checking health | string | `"300"` | no |
 | health\_check\_type | The health check type to apply to the Autoscaling groups. | string | `"ELB"` | no |
 | iam\_instance\_profile | The IAM instance profile to associate with launched instances | string | `""` | no |
+| initial\_lifecycle\_hooks | One or more [Lifecycle Hooks](http://docs.aws.amazon.com/autoscaling/latest/userguide/lifecycle-hooks.html) to attach to the autoscaling group before instances are launched. The syntax is exactly the same as the separate [`aws_autoscaling_lifecycle_hook`](https://www.terraform.io/docs/providers/aws/r/autoscaling_lifecycle_hooks.html) resource, without the autoscaling_group_name attribute | list | `<list>` | no |
 | key\_name | The key name that should be used for the instance | string | `""` | no |
 | loadbalancers | A list of load balancer names to add to the autoscaling groups | list | `<list>` | no |
 | name | Name of the Auto Scaling Groups | string | n/a | yes |
@@ -45,6 +46,8 @@ Terraform module to setup blue / green deployments
 |------|-------------|
 | blue\_asg\_id | Blue autoscaling group id |
 | green\_asg\_id | Green autoscaling group id |
+| nonbinding\_blue\_asg\_name | This is the raw blue autoscaling group name, without creating a dependency with the actual autoscaling group resource |
+| nonbinding\_green\_asg\_name | This is the raw green autoscaling group name, without creating a dependency with the actual autoscaling group resource |
 
 ### Example
 
