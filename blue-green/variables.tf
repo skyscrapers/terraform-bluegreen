@@ -128,7 +128,7 @@ variable "health_check_type" {
 }
 
 variable "tags" {
-  description = "List of map of additional tags"
+  description = "List as a map of additional tags"
   type        = "list"
   default     = []
 }

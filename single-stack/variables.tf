@@ -52,8 +52,8 @@ variable "disk_volume_size" {
 }
 
 variable "disk_volume_type" {
-  description = "The type of the volume. Default is standard"
-  default     = "standard"
+  description = "The type of the volume"
+  default     = "gp2"
 }
 
 variable "subnets" {

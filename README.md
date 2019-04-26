@@ -35,7 +35,7 @@ Terraform module to setup blue / green deployments
 | security\_groups | A list of associated security group IDS | list | `<list>` | no |
 | spot\_price | Spot price you want to pay for your instances. By default this is empty and we will use on-demand instances | string | `""` | no |
 | subnets | A list of subnet IDs to launch resources in | list | `<list>` | no |
-| tags | List of map of additional tags | list | `<list>` | no |
+| tags | List as a map of additional tags | list | `<list>` | no |
 | target\_group\_arns | A list of aws_alb_target_group ARNs, for use with Application Load Balancing | list | `<list>` | no |
 | termination\_policies | Order in termination policies to apply when choosing instances to terminate. | list | `<list>` | no |
 | wait\_for\_capacity\_timeout | A maximum duration that Terraform should wait for ASG instances to be healthy before timing out. Setting this to 0 causes Terraform to skip all Capacity Waiting behavior. | string | `"10m"` | no |
@@ -56,12 +56,12 @@ module "bluegreen" {
   source                 = "github.com/skyscrapers/terraform-bluegreen//blue-green"
   name                   = "app-${terraform.workspace}"
   blue_ami               = "ami-blabla"
-  blue_instance_type     = "t2.micro"
+  blue_instance_type     = "t3.micro"
   blue_max_size          = 5
   blue_min_size          = 2
   blue_desired_capacity  = 2
   green_ami              = "ami-blabla"
-  green_instance_type    = "t2.micro"
+  green_instance_type    = "t3.micro"
   green_max_size         = 0
   green_min_size         = 0
   green_desired_capacity = 0
