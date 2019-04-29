@@ -12,7 +12,7 @@ def main(argv):
     helptext = 'bluegreen.py -f <path to terraform project> -a <ami> -c <command> -t <timeout> -e <environment.tfvars> -i <inactive-desired> [-r <assume-role-arn>]'
 
     try:
-        opts, args = getopt.getopt(argv, "hsf:a:c:t:e:i:r:", ["folder=", "ami=", "command=", "timeout=", "environment=", "inactive-desired=", "role-arn="])
+        opts, args = getopt.getopt(argv, "hsf:a:c:t:e:i:r:", ["folder=","ami=", "command=", "timeout=", "environment=", "inactive-desired=", "role-arn="])
     except getopt.GetoptError:
         print helptext
         sys.exit(2)

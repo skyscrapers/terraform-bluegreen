@@ -1,21 +1,25 @@
+variable "name" {
+  description = "Name for the created resources"
+}
+
 variable "evaluation_periods" {
   default     = "4"
-  description = "the number of samples to evaluate"
+  description = "The number of samples to evaluate"
 }
 
 variable "namespace" {
   default     = "AWS/EC2"
-  description = "the namespace of the cloudwatch metric"
+  description = "The namespace of the cloudwatch metric"
 }
 
 variable "period_down" {
   default     = "120"
-  description = "he period in seconds over which the selected metric statistic is applied."
+  description = "The period in seconds over which the selected metric statistic is applied."
 }
 
 variable "period_up" {
   default     = "60"
-  description = "he period in seconds over which the selected metric statistic is applied."
+  description = "The period in seconds over which the selected metric statistic is applied."
 }
 
 variable "statistic" {
@@ -59,24 +63,12 @@ variable "adjustment_down" {
 }
 
 variable "num_asg" {
-  description = "the number of autoscaling groups passed"
+  description = "The number of autoscaling groups passed"
   default     = "2"
 }
 
-variable "project" {
-  description = "Project name to use"
-}
-
-variable "name" {
-  description = "Name of the stack"
-}
-
-variable "environment" {
-  description = "Environment to deploy on"
-}
-
-variable "autoscaling_group_name" {
-  description = "The name of the AS group this config needs to be applied"
+variable "autoscaling_group_names" {
+  description = "The names of the Auto Scaling Groups this config needs to be applied to"
   type        = "list"
 }
 
