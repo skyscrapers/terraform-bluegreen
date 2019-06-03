@@ -38,7 +38,7 @@ resource "aws_autoscaling_group" "bluegreen_asg" {
   wait_for_capacity_timeout = var.wait_for_capacity_timeout
 
   dynamic "initial_lifecycle_hook" {
-    for_each = [var.initial_lifecycle_hooks]
+    for_each = var.initial_lifecycle_hooks
     content {
       default_result          = lookup(initial_lifecycle_hook.value, "default_result", null)
       heartbeat_timeout       = lookup(initial_lifecycle_hook.value, "heartbeat_timeout", null)
