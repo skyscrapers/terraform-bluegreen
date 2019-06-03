@@ -11,7 +11,7 @@ resource "aws_launch_configuration" "bluegreen_launchconfig" {
   root_block_device {
     volume_type           = var.disk_volume_type
     volume_size           = var.disk_volume_size
-    delete_on_termination = "true"
+    delete_on_termination = true
   }
 
   lifecycle {
