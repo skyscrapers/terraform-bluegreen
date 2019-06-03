@@ -1,91 +1,109 @@
 variable "name" {
+  type        = string
   description = "Name for the created resources"
 }
 
 variable "evaluation_periods" {
-  default     = "4"
+  type        = number
   description = "The number of samples to evaluate"
+  default     = 4
 }
 
 variable "namespace" {
-  default     = "AWS/EC2"
+  type        = string
   description = "The namespace of the cloudwatch metric"
+  default     = "AWS/EC2"
 }
 
 variable "period_down" {
-  default     = "120"
+  type        = number
   description = "The period in seconds over which the selected metric statistic is applied."
+  default     = 120
 }
 
 variable "period_up" {
-  default     = "60"
+  type        = number
   description = "The period in seconds over which the selected metric statistic is applied."
+  default     = 60
 }
 
 variable "statistic" {
-  default     = "Average"
+  type        = string
   description = "The statistic to apply to the alarm's associated metric. Either of the following is supported:"
+  default     = "Average"
 }
 
 variable "threshold_up" {
-  default     = "80"
+  type        = number
   description = "The metric value to scale up"
+  default     = 80
 }
 
 variable "threshold_down" {
-  default     = "30"
+  type        = number
   description = "The metric value to scale down"
+  default     = 30
 }
 
 variable "policy_type" {
-  default     = "SimpleScaling"
+  type        = string
   description = "The policy type, either SimpleScaling or StepScaling"
+  default     = "SimpleScaling"
 }
 
 variable "cooldown_up" {
-  default     = "300"
+  type        = number
   description = "The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start."
+  default     = 300
 }
 
 variable "cooldown_down" {
-  default     = "600"
+  type        = number
   description = "The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start."
+  default     = 600
 }
 
 variable "adjustment_up" {
-  default     = "1"
+  type        = number
   description = "The number of instances to add when the alarm is triggered"
+  default     = 1
 }
 
 variable "adjustment_down" {
-  default     = "-1"
+  type        = number
   description = "The number of instances to remove when the alarm is triggered (the value has to be negative)"
+  default     = -1
 }
 
 variable "num_asg" {
+  type        = number
   description = "The number of autoscaling groups passed"
-  default     = "2"
+  default     = 2
 }
 
 variable "autoscaling_group_names" {
+  type        = list(string)
   description = "The names of the Auto Scaling Groups this config needs to be applied to"
-  type        = "list"
 }
 
 variable "metric_name" {
+  type        = string
   description = "The metric the scaling is based upon"
   default     = "CPUUtilization"
 }
 
 variable "adjustment_type" {
+  type        = string
   description = "What typ of adjustment needs to happen"
   default     = "ChangeInCapacity"
 }
 
 variable "dimension_name" {
+  type    = string
   default = "AutoScalingGroupName"
 }
 
 variable "dimension_value" {
-  default = "false"
+  type    = string
+  default = null
 }
