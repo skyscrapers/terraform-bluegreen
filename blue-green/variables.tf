@@ -157,8 +157,8 @@ variable "tags" {
 
 variable "spot_price" {
   type        = string
-  description = "Spot price you want to pay for your instances. By default this is empty and we will use on-demand instances"
-  default     = ""
+  description = "Spot price you want to pay for your instances. If not set this module will use on-demand instances"
+  default     = null
 }
 
 variable "wait_for_capacity_timeout" {
