@@ -8,7 +8,7 @@ image_resource:
 
 params:
   TF_PROJECT_FOLDER:
-  TF_VERSION: "0.11.7"
+  TF_VERSION: "0.12.0"
   AWS_DEFAULT_REGION: eu-west-1
   TF_ENVIRONMENT:
   ASSUME_ROLE_ARN:
