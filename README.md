@@ -27,9 +27,9 @@ Terraform module to setup blue / green deployments
 | green\_user\_data | The user data to provide when launching the Green instances | string | `"# Hello World"` | no |
 | health\_check\_grace\_period | Time (in seconds) after instance comes into service before checking health | number | `300` | no |
 | health\_check\_type | The health check type to apply to the Autoscaling groups. | string | `"ELB"` | no |
-| iam\_instance\_profile | The IAM instance profile to associate with launched instances | string | `""` | no |
+| iam\_instance\_profile | The IAM instance profile to associate with launched instances | string | `null` | no |
 | initial\_lifecycle\_hooks | One or more [Lifecycle Hooks](http://docs.aws.amazon.com/autoscaling/latest/userguide/lifecycle-hooks.html) to attach to the autoscaling group before instances are launched. The syntax is exactly the same as the separate [`aws_autoscaling_lifecycle_hook`](https://www.terraform.io/docs/providers/aws/r/autoscaling_lifecycle_hooks.html) resource, without the autoscaling_group_name attribute | list(map(string)) | `[]` | no |
-| key\_name | The key name that should be used for the instance | string | `""` | no |
+| key\_name | The key name that should be used for the instance | string | `null` | no |
 | loadbalancers | A list of load balancer names to add to the autoscaling groups | list(string) | `[]` | no |
 | name | Name of the Auto Scaling Groups | string | n/a | yes |
 | security\_groups | A list of associated security group IDS | list(string) | `[]` | no |

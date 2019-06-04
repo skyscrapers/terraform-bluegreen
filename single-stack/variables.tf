@@ -21,7 +21,7 @@ variable "instance_type" {
 variable "key_name" {
   type        = string
   description = "The key name that should be used for the instance"
-  default     = ""
+  default     = null
 }
 
 variable "loadbalancers" {
@@ -39,7 +39,7 @@ variable "security_groups" {
 variable "iam_instance_profile" {
   type        = string
   description = "The IAM instance profile to associate with launched instances"
-  default     = ""
+  default     = null
 }
 
 variable "associate_public_ip_address" {
