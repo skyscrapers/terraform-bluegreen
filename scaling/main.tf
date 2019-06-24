@@ -10,7 +10,7 @@ resource "aws_cloudwatch_metric_alarm" "alarm_down" {
   threshold           = var.threshold_down
 
   dimensions = {
-    var.dimension_name = coalesce(var.dimension_value, var.autoscaling_group_names[count.index])
+    "${var.dimension_name}" = coalesce(var.dimension_value, var.autoscaling_group_names[count.index])
   }
 
   alarm_description = "This metric monitors CPU utilization down"
@@ -29,7 +29,7 @@ resource "aws_cloudwatch_metric_alarm" "alarm_up" {
   threshold           = var.threshold_up
 
   dimensions = {
-    var.dimension_name = coalesce(var.dimension_value, var.autoscaling_group_names[count.index])
+    "${var.dimension_name}" = coalesce(var.dimension_value, var.autoscaling_group_names[count.index])
   }
 
   alarm_description = "This metric monitors CPU utilization up"
