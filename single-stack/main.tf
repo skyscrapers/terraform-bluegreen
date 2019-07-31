@@ -58,11 +58,6 @@ resource "aws_autoscaling_group" "bluegreen_asg" {
         "propagate_at_launch" = true
       },
       {
-        "key"                 = "Type"
-        "value"               = var.type == null ? var.name : var.type
-        "propagate_at_launch" = true
-      },
-      {
         "key"                 = "Color"
         "value"               = var.color
         "propagate_at_launch" = true

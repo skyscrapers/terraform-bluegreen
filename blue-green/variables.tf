@@ -172,9 +172,3 @@ variable "initial_lifecycle_hooks" {
   description = "One or more [Lifecycle Hooks](http://docs.aws.amazon.com/autoscaling/latest/userguide/lifecycle-hooks.html) to attach to the autoscaling group before instances are launched. The syntax is exactly the same as the separate [`aws_autoscaling_lifecycle_hook`](https://www.terraform.io/docs/providers/aws/r/autoscaling_lifecycle_hooks.html) resource, without the autoscaling_group_name attribute"
   default     = []
 }
-
-variable "type" {
-  type        = string
-  description = "the type of application running in this ASG's instances"
-  default     = null
-}

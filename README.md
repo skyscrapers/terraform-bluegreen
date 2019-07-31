@@ -38,7 +38,6 @@ Terraform module to setup blue / green deployments
 | tags | List as a map of additional tags | list(map(string)) | `[]` | no |
 | target\_group\_arns | A list of aws_alb_target_group ARNs, for use with Application Load Balancing | list(string) | `[]` | no |
 | termination\_policies | Order in termination policies to apply when choosing instances to terminate. | list(string) | `[]` | no |
-| type | The type of application running in this ASG's instances | string | null | no |
 | wait\_for\_capacity\_timeout | A maximum duration that Terraform should wait for ASG instances to be healthy before timing out. Setting this to 0 causes Terraform to skip all Capacity Waiting behavior. | string | `"10m"` | no |
 
 ### Outputs
@@ -98,7 +97,6 @@ Terraform module to setup alarms and autoscaling triggers for autoscaling
 | statistic | The statistic to apply to the alarm's associated metric. Either of the following is supported: | string | `"Average"` | no |
 | threshold\_down | The metric value to scale down | number | `30` | no |
 | threshold\_up | The metric value to scale up | number | `80` | no |
-| type | The type of application running in this ASG's instances | string | null | no |
 
 ### Example
 
