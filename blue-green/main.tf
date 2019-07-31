@@ -1,5 +1,5 @@
 module "blue" {
-  source                      = "../single-stack"
+  source                      = "/Users/luca/workplace/terraform/terraform-bluegreen/single-stack"
   color                       = "blue"
   name                        = var.name
   max_size                    = var.blue_max_size
@@ -23,11 +23,12 @@ module "blue" {
   health_check_type           = var.health_check_type
   wait_for_capacity_timeout   = var.wait_for_capacity_timeout
   tags                        = var.tags
+  type                        = var.type
   initial_lifecycle_hooks     = var.initial_lifecycle_hooks
 }
 
 module "green" {
-  source                      = "../single-stack"
+  source                      = "/Users/luca/workplace/terraform/terraform-bluegreen/single-stack"
   color                       = "green"
   name                        = var.name
   max_size                    = var.green_max_size
@@ -51,5 +52,6 @@ module "green" {
   health_check_type           = var.health_check_type
   wait_for_capacity_timeout   = var.wait_for_capacity_timeout
   tags                        = var.tags
+  type                        = var.type
   initial_lifecycle_hooks     = var.initial_lifecycle_hooks
 }
