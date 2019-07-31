@@ -1,5 +1,5 @@
 module "blue" {
-  source                      = "/Users/luca/workplace/terraform/terraform-bluegreen/single-stack"
+  source                      = "../single-stack"
   color                       = "blue"
   name                        = var.name
   max_size                    = var.blue_max_size
@@ -27,7 +27,7 @@ module "blue" {
 }
 
 module "green" {
-  source                      = "/Users/luca/workplace/terraform/terraform-bluegreen/single-stack"
+  source                      = "../single-stack"
   color                       = "green"
   name                        = var.name
   max_size                    = var.green_max_size
