@@ -8,6 +8,7 @@ resource "aws_cloudwatch_metric_alarm" "alarm_down" {
   period              = var.period_down
   statistic           = var.statistic
   threshold           = var.threshold_down
+  datapoints_to_alarm = var.datapoints_to_alarm_down
 
   dimensions = {
     "${var.dimension_name}" = coalesce(var.dimension_value, var.autoscaling_group_names[count.index])
@@ -27,6 +28,7 @@ resource "aws_cloudwatch_metric_alarm" "alarm_up" {
   period              = var.period_up
   statistic           = var.statistic
   threshold           = var.threshold_up
+  datapoints_to_alarm = var.datapoints_to_alarm_up
 
   dimensions = {
     "${var.dimension_name}" = coalesce(var.dimension_value, var.autoscaling_group_names[count.index])

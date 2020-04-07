@@ -77,26 +77,28 @@ Terraform module to setup alarms and autoscaling triggers for autoscaling
 ### Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| adjustment\_down | The number of instances to remove when the alarm is triggered (the value has to be negative) | number | `-1` | no |
-| adjustment\_type | What typ of adjustment needs to happen | string | `"ChangeInCapacity"` | no |
-| adjustment\_up | The number of instances to add when the alarm is triggered | number | `1` | no |
-| autoscaling\_group\_names | The names of the Auto Scaling Groups this config needs to be applied to | list | n/a | yes |
-| cooldown\_down | The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start. | number | `600` | no |
-| cooldown\_up | The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start. | number | `300` | no |
-| dimension\_name |  | string | `"AutoScalingGroupName"` | no |
-| dimension\_value |  | bool | `false` | no |
-| evaluation\_periods | The number of samples to evaluate | number | `4` | no |
-| metric\_name | The metric the scaling is based upon | string | `"CPUUtilization"` | no |
-| name | Name of the Auto Scaling Groups | string | n/a | yes |
-| namespace | The namespace of the cloudwatch metric | string | `"AWS/EC2"` | no |
-| num\_asg | The number of autoscaling groups passed | number | `2` | no |
-| period\_down | The period in seconds over which the selected metric statistic is applied. | number | `120` | no |
-| period\_up | The period in seconds over which the selected metric statistic is applied. | number | `60` | no |
-| policy\_type | The policy type, either SimpleScaling or StepScaling | string | `"SimpleScaling"` | no |
-| statistic | The statistic to apply to the alarm's associated metric. Either of the following is supported: | string | `"Average"` | no |
-| threshold\_down | The metric value to scale down | number | `30` | no |
-| threshold\_up | The metric value to scale up | number | `80` | no |
+|------|-------------|------|---------|:-----:|
+| adjustment_down | The number of instances to remove when the alarm is triggered (the value has to be negative) | `number` | `-1` | no |
+| adjustment_type | What typ of adjustment needs to happen | `string` | `"ChangeInCapacity"` | no |
+| adjustment_up | The number of instances to add when the alarm is triggered | `number` | `1` | no |
+| autoscaling_group_names | The names of the Auto Scaling Groups this config needs to be applied to | `list(string)` | n/a | yes |
+| cooldown_down | The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start. | `number` | `600` | no |
+| cooldown_up | The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start. | `number` | `300` | no |
+| datapoints_to_alarm_down | The number of datapoints that must be breaching to trigger the scale DOWN alarm | `number` | n/a | yes |
+| datapoints_to_alarm_up | The number of datapoints that must be breaching to trigger the scale UP alarm | `number` | n/a | yes |
+| dimension_name | n/a | `string` | `"AutoScalingGroupName"` | no |
+| dimension_value | n/a | `string` | n/a | yes |
+| evaluation_periods | The number of samples to evaluate | `number` | `4` | no |
+| metric_name | The metric the scaling is based upon | `string` | `"CPUUtilization"` | no |
+| name | Name for the created resources | `string` | n/a | yes |
+| namespace | The namespace of the cloudwatch metric | `string` | `"AWS/EC2"` | no |
+| num_asg | The number of autoscaling groups passed | `number` | `2` | no |
+| period_down | The period in seconds over which the selected metric statistic is applied. | `number` | `120` | no |
+| period_up | The period in seconds over which the selected metric statistic is applied. | `number` | `60` | no |
+| policy_type | The policy type, either SimpleScaling or StepScaling | `string` | `"SimpleScaling"` | no |
+| statistic | The statistic to apply to the alarm's associated metric. Either of the following is supported: | `string` | `"Average"` | no |
+| threshold_down | The metric value to scale down | `number` | `30` | no |
+| threshold_up | The metric value to scale up | `number` | `80` | no |
 
 ### Example
 

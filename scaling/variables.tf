@@ -107,3 +107,15 @@ variable "dimension_value" {
   type    = string
   default = null
 }
+
+variable "datapoints_to_alarm_up" {
+  type        = number
+  description = "The number of datapoints that must be breaching to trigger the scale UP alarm"
+  default     = null
+}
+
+variable "datapoints_to_alarm_down" {
+  type        = number
+  description = "The number of datapoints that must be breaching to trigger the scale DOWN alarm"
+  default     = null
+}
